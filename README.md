@@ -31,7 +31,7 @@ git clone https://github.com/puhach/CVND_P3_SLAM.git
 cd CVND_P3_SLAM
 ```
 
-2. Create (and activate) a new environment, named `cv-nd` with Python 3.6. If prompted to proceed with the install `(Proceed [y]/n)` type y.
+2. Create (and activate) a new environment, named `slam` with Python 3.6. If prompted to proceed with the install `(Proceed [y]/n)` type y.
 
 	- __Linux__ or __Mac__: 
 	```
