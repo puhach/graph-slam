@@ -19,7 +19,7 @@ __Notebook 2__ : Omega and Xi, Constraints
 __Notebook 3__ : Landmark Detection and Tracking 
 
 
-## Project Instructions
+## Setup
 
 Before we can get started coding, we need to make sure to have all the libraries and dependencies required to support this project. 
 
@@ -68,4 +68,6 @@ jupyter notebook
 3. Once opened any of the project notebooks, make sure you are in the correct `slam` environment by clicking `Kernel > Change Kernel > slam`.
 
 
-LICENSE: This project is licensed under the terms of the MIT license.
+## License
+
+This project is licensed under the terms of the MIT license.
