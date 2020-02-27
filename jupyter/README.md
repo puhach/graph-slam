@@ -27,8 +27,8 @@ Before we can get started coding, we need to make sure to have all the libraries
 
 1. Clone the repository, and navigate to the downloaded folder.
 ```
-git clone https://github.com/puhach/CVND_P3_SLAM.git
-cd CVND_P3_SLAM
+git clone https://github.com/puhach/graph-slam.git
+cd graph-slam
 ```
 
 2. Create (and activate) a new environment, named `slam` with Python 3.6. If prompted to proceed with the install `(Proceed [y]/n)` type y.
@@ -44,7 +44,7 @@ cd CVND_P3_SLAM
 	activate slam
 	```
 	
-	At this point your command line should look something like: `(slam) <User>:CVND_P3_SLAM <user>$`. The `(slam)` indicates that your environment has been activated, and you can proceed with further package installations.
+	At this point your command line should look something like: `(slam) <User>:graph-slam <user>$`. The `(slam)` indicates that your environment has been activated, and you can proceed with further package installations.
 
 6. Install a few required pip packages, which are specified in the requirements text file (including OpenCV).
 ```
@@ -57,7 +57,7 @@ pip install -r requirements.txt
 1. Navigate back to the repo (your source environment should still be activated at this point):
 ```shell
 cd
-cd CVND_P3_SLAM
+cd graph-slam
 ```
 
 2. Open the directory of notebooks, using the below command:
