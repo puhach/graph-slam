@@ -6,10 +6,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-# --------
-# this helper function displays the world that a robot is in
-# it assumes the world is a square grid of some given size
-# and that landmarks is a list of landmark positions(an optional argument)
+# This helper function displays the world that a robot is in.
+# It assumes the world is a square grid of some given size
+# and that landmarks is a list of landmark positions(an optional argument).
 def display_world(world_size, position, landmarks=None):
     
     # using seaborn, set background grid to gray
@@ -47,11 +46,9 @@ def display_world(world_size, position, landmarks=None):
     plt.show()
 
     
-# --------
-# this routine makes the robot data
-# the data is a list of measurements and movements: [measurements, [dx, dy]]
-# collected over a specified number of time steps, N
-#
+# This routine makes the robot data. 
+# The data is a list of measurements and movements: [measurements, [dx, dy]]
+# collected over a specified number of time steps, N.
 def make_data(N, num_landmarks, world_size, measurement_range, motion_noise, 
               measurement_noise, distance):
 
