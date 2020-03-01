@@ -23,7 +23,7 @@ set(EIGEN3_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/eigen")
 #message("${CMAKE_MODULE_PATH}")
 #message("${EIGEN3_INCLUDE_DIR}")
 
-add_executable(GraphSlamConsole main.cpp world.cpp)
+add_executable(GraphSlamConsole main.cpp world.cpp robot.cpp)
 
 target_include_directories(GraphSlamConsole PUBLIC "${EIGEN3_INCLUDE_DIR}")
                            
