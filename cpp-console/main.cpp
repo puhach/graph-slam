@@ -5,6 +5,8 @@
 
 //#include <Eigen/Dense>
 
+#include "world.h"
+
 //using namespace std;
 //using namespace Eigen;
 
