@@ -1,7 +1,5 @@
 #include <iostream>
-#include <iterator>
-#include <vector>
-#include <random>
+
 
 //#include <Eigen/Dense>
 
@@ -10,43 +8,33 @@
 //using namespace std;
 //using namespace Eigen;
 
-using LandmarkList = std::vector<std::tuple<int, int> >;
-
-
-LandmarkList create_landmarks(int n, int worldHSize, int worldVSize)
-{
-    LandmarkList landmarks(n);
-
-    // Seed with a real random value, if available
-    std::random_device r;
-
-    // Choose a random mean between 1 and 6
-    //std::default_random_engine e1(r());
-    std::mt19937 gen(r());
-    std::uniform_int_distribution<int> uniform_dist;
-    
-    for (auto& [x, y] : landmarks)
-    {
-        x = uniform_dist(gen) % worldHSize;
-        y = uniform_dist(gen) % worldVSize;
-    }
-
-    return landmarks;
-}
 
 int main()
 {
-    enum class World: int
-    {
-        rows = 10,
-        cols = 8
-    };
+    // TODO: enter the world size, the number of landmarks, and the number of time steps
 
-    int nLandmarks = 12;
-    std::vector<std::tuple<int, int> > landmarks = create_landmarks(nLandmarks, static_cast<int>(World::cols), static_cast<int>(World::rows));
+    // initialize the world of size 8 x 10 with 12 landmarks
+    World world(8, 10, 12); 
+    
+    // show the landmarks
+    std::cout << world << std::endl;
 
-    //std::copy(landmarks.begin(), landmarks.end(), std::ostream_iterator<std::tuple<int, int> >(std::cout, " "));
-    for (const auto& [x, y] : landmarks)
-        std::cout << "(" << x << ", " << y << ") ";
-    std::cout << std::endl;
+    // create the robot at position (3; 4) in the world 
+    //Robot& robot = world.getRobot();
+    Robot robot(3, 4, world);
+
+    // simulate robot motions and measurements over 50 time steps
+    auto [realPositions, measurements] = robot.moveAndSense(50); 
+    //robot.moveAndSense(50);
+    //auto [motions, measurements] = robot.getHistory();
+    //std::cout << robot << std::endl;
+
+    // TODO: print actual robot positions 
+
+    // run SLAM to estimate positions of the robot and landmarks
+    auto [estPositions, estLandmarks] = robot.localize();
+    //auto [mux, muy] = slam(data);
+
+    // TODO: print estimated positions and landmarks
+
 }
