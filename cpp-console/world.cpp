@@ -1,9 +1,13 @@
-#include "world.h"
-#include "robot.h"
 
+//#include <format> // since C++20
 #include <iterator>
 #include <vector>
 #include <random>
+#include <exception>
+
+#include "world.h"
+#include "robot.h"
+
 
 /*
 using LandmarkList = std::vector<std::tuple<int, int> >;
@@ -36,10 +40,15 @@ LandmarkList create_landmarks(int n, int worldHSize, int worldVSize)
 World::World(int width, int height, int nLandmarks)
     : width(width)
     , height(height)
-    , landmarks(nLandmarks)
+    , landmarks(nLandmarks >= MinLandmarks && nLandmarks <= MaxLandmarks ? nLandmarks : throw std::invalid_argument("Invalid number of landmarks."))
 {
+    if (width < MinWorld || height < MinWorld)
+        throw std::invalid_argument(std::string("The world is too small."));
 
+    if (width > MaxWorld || height > MaxWorld)
+        throw std::invalid_argument(std::string("The world is too large."));
 
+    
     // Seed with a real random value, if available
     std::random_device r;
 
