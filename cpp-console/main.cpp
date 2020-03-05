@@ -11,30 +11,38 @@
 
 int main()
 {
-    // TODO: enter the world size, the number of landmarks, and the number of time steps
+    try
+    {
+        // TODO: enter the world size, the number of landmarks, and the number of time steps
 
-    // initialize the world of size 8 x 10 with 12 landmarks
-    World world(8, 10, 12); 
-    
-    // show the landmarks
-    std::cout << world << std::endl;
+        // initialize the world of size 8 x 10 with 12 landmarks
+        World world(8, 10, 12);
 
-    // create the robot at position (3; 4) in the world 
-    //Robot& robot = world.getRobot();
-    Robot robot(3, 4, world);
+        /*
+        // show the landmarks
+        std::cout << world << std::endl;
 
-    // simulate robot motions and measurements over 50 time steps
-    auto [realPositions, measurements] = robot.moveAndSense(50); 
-    //robot.moveAndSense(50);
-    //auto [motions, measurements] = robot.getHistory();
-    //std::cout << robot << std::endl;
+        // create the robot at position (3; 4) in the world
+        //Robot& robot = world.getRobot();
+        Robot robot(3, 4, world);
 
-    // TODO: print actual robot positions 
+        // simulate robot motions and measurements over 50 time steps
+        auto [realPositions, measurements] = robot.moveAndSense(50);
+        //robot.moveAndSense(50);
+        //auto [motions, measurements] = robot.getHistory();
+        //std::cout << robot << std::endl;
 
-    // run SLAM to estimate positions of the robot and landmarks
-    auto [estPositions, estLandmarks] = robot.localize();
-    //auto [mux, muy] = slam(data);
+        // TODO: print actual robot positions
 
-    // TODO: print estimated positions and landmarks
+        // run SLAM to estimate positions of the robot and landmarks
+        auto [estPositions, estLandmarks] = robot.localize();
+        //auto [mux, muy] = slam(data);
 
+        // TODO: print estimated positions and landmarks
+        */
+    }
+    catch (const std::exception & e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 }
