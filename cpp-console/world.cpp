@@ -81,3 +81,42 @@ World::World(int width, int height, int nLandmarks)
 
 }
 
+
+
+std::ostream& operator << (std::ostream& ostream, const World& world)
+{
+    ostream << "Landmarks: [";
+
+    //for (const auto& lk : world.landmarks)
+    //    ostream << "(" << std::get<0>(lk) << "," << std::get<1>(lk) << "), ";
+
+    auto it = world.landmarks.cbegin();
+
+    if (it != world.landmarks.end())
+    {
+        ostream << "(" << std::get<0>(*it) << ", " << std::get<1>(*it) << ")";
+        ++it;
+
+        for (; it != world.landmarks.end(); ++it)
+            ostream << ", (" << std::get<0>(*it) << ", " << std::get<1>(*it) << ")";
+
+    }
+        
+    ostream << "]" << std::endl;
+
+
+    //std::copy(world.landmarks.begin(), world.landmarks.end(), std::ostream_iterator<std::tuple<int, int> >(std::cout, ","));
+
+    // not sure if we need to show the map
+    /*for (int i = 0; i < world.height; ++i)
+    {
+        for (int j = 0; j < world.width; ++j)
+        {
+
+        }
+
+        ostream << std::endl;
+    }*/
+
+    return ostream;
+}
