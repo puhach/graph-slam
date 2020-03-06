@@ -94,11 +94,11 @@ std::ostream& operator << (std::ostream& ostream, const World& world)
 
     if (it != world.landmarks.end())
     {
-        ostream << "(" << std::get<0>(*it) << ", " << std::get<1>(*it) << ")";
+        ostream << "(" << it->first << ", " << it->second << ")";
         ++it;
 
         for (; it != world.landmarks.end(); ++it)
-            ostream << ", (" << std::get<0>(*it) << ", " << std::get<1>(*it) << ")";
+            ostream << ", (" << it->first << ", " << it->second << ")";
 
     }
         

@@ -14,7 +14,7 @@ public:
 
 private:
 	int width, height;
-	std::vector<std::tuple<int, int> > landmarks;
+	std::vector<std::pair<int, int> > landmarks;
 };	// World
 
 
