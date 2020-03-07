@@ -81,6 +81,14 @@ World::World(int width, int height, int nLandmarks)
 
 }
 
+void World::getWorldSize(int& width, int& height) const noexcept
+{
+    width = this->width;
+    height = this->height;
+}
+
+
+
 
 
 std::ostream& operator << (std::ostream& ostream, const World& world)

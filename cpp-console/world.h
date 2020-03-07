@@ -12,9 +12,17 @@ public:
 
 	World(int width, int height, int nLandmarks);
 
+	std::pair<int, int> getWorldSize() const { return { this->width, this->height }; }
+
+	void getWorldSize(int& width, int& height) const noexcept;
+
+	int getWidth() const noexcept { return this->width; }
+
+	int getHeight() const noexcept { return this->height; }
+
 private:
 	int width, height;
-	std::vector<std::pair<int, int> > landmarks;
+	std::vector<std::pair<int, int> > landmarks;	// TODO: probably, change landmark positions to double
 };	// World
 
 
