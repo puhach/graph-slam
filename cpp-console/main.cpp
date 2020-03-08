@@ -1,10 +1,12 @@
-#include <iostream>
 
 
-//#include <Eigen/Dense>
+
 
 #include "world.h"
 #include "robot.h"
+
+#include <iostream>
+//#include <Eigen/Dense>
 
 //using namespace std;
 //using namespace Eigen;
@@ -30,7 +32,7 @@ int main()
 
         /*
         // simulate robot motions and measurements over 50 time steps
-        auto [realPositions, measurements] = robot.moveAndSense(50);
+        auto [measurements, realPositions] = robot.moveAndSense(50);
         //robot.moveAndSense(50);
         //auto [motions, measurements] = robot.getHistory();
         //std::cout << robot << std::endl;
