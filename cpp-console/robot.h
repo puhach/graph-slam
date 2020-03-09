@@ -19,12 +19,13 @@ public:
 
 	enum { MaxTimeSteps = 1000 };
 
-	Robot(int x, int y, World &world);
+	//Robot(int x, int y, World &world);
+	Robot(double x, double y, World &world);
 
 	std::pair<Measurements, Displacements> moveAndSense(int timesteps);
 
 private:
-	int x, y;	// TODO: change to double
+	double x, y;	// TODO: change to double
 	World& world;
 };	// Robot
 
