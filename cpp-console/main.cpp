@@ -32,7 +32,7 @@ int main()
 
         /*
         // simulate robot motions and measurements over 50 time steps
-        auto [measurements, realPositions] = robot.moveAndSense(50);
+        auto [measurements, displacements] = robot.moveAndSense(50);
         //robot.moveAndSense(50);
         //auto [motions, measurements] = robot.getHistory();
         //std::cout << robot << std::endl;

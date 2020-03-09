@@ -11,20 +11,26 @@ Robot::Robot(int x, int y, World& world)
 
 }
 
-std::pair<Measurements, Positions> Robot::moveAndSense(int timesteps)
+std::pair<Measurements, Displacements> Robot::moveAndSense(int timesteps)
 {
 	if (timesteps < 1 || timesteps > MaxTimeSteps)
 		throw std::invalid_argument("The number of time steps is invalid.");
 
-	Measurements measurements(timesteps);
-	Positions positions(timesteps);
+	// There is an additional measurement and displacement for the initial position.
+	Measurements measurements(timesteps+1);
+	Displacements displacements(timesteps+1);
 
-	for (int t = 0; t < timesteps; ++t)
+	// The initial position is represented as a displacement from the world origin (0; 0).
+	// TODO: try not to use the initial position, because in practice it may be unknown.
+	measurements[0] = std::move(this->sense());
+	displacements[0] = Displacement(this->x, this->y);
+	//double x0 = 0, y0 = 0;
+
+	for (int t = 1; t <= timesteps; ++t)
 	{
 		measurements[t] = std::move(sense());		
-		positions[t] = Position(this->x, this->y);
-		this->wander();
+		displacements[t] = this->wander();	// returns the displacement from the previous position
 	}
 
-	return { measurements, positions};
+	return { measurements, displacements };
 }
