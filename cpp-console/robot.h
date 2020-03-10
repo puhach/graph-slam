@@ -5,6 +5,7 @@
 
 class World;
 
+// TODO: perhaps, rename it to LandmarkDisplacement or LkDisplacement
 using LandmarkDistance = std::tuple<int, double, double>;	// (landmark_index, horizontal distance to landmark, vertical distance to landmark)
 using Measurement = std::vector<LandmarkDistance>;
 using Measurements = std::vector<Measurement>;
@@ -25,6 +26,9 @@ public:
 	std::pair<Measurements, Displacements> moveAndSense(int timesteps);
 
 private:
+
+	Measurement sense() const;
+
 	double x, y;	// TODO: change to double
 	World& world;
 };	// Robot

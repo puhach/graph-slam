@@ -34,4 +34,33 @@ std::pair<Measurements, Displacements> Robot::moveAndSense(int timesteps)
 	}
 
 	return { measurements, displacements };
-}
+}	// moveAndSense
+
+
+Measurement Robot::sense() const
+{
+	Measurement measurement;
+	measurement.reserve(this->world.getLandmarkNum());
+
+	for (int i = 0; i < this->world.getLandmarkNum(); ++i)
+	{		
+		auto [lkx, lky] = world.getLandmark(i);
+
+		// Get the distance to the landmark.
+		double dx = lkx - this->x;
+		double dy = lky - this->y;
+
+		// Distort the measurement.
+		// TODO: try using something Gaussian kernel to distort farther landmark distances more
+		//double factorX = 1 - std::exp(-dx * dx), factorY = 1 - std::exp(-dy * dy);
+		//dx += rand()*measurementNoise*factorX
+		//dy += rand()*measurementNoise*factorY
+		distortMeasurement(dx, dy);
+		
+		if (dx * dx + dy * dy <= this->sensorRange)
+			measurement.emplace_back(i, dx, dy);
+		//if (() + ())
+	}
+
+	return measurement;
+}	// sense
