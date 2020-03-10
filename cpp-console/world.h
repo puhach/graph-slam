@@ -22,7 +22,7 @@ public:
 
 private:
 	int width, height;
-	std::vector<std::pair<int, int> > landmarks;	// TODO: probably, change landmark positions to double
+	std::vector<std::pair<double, double> > landmarks;	
 };	// World
 
 
