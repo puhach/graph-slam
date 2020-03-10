@@ -2,6 +2,7 @@
 
 #include <tuple>
 #include <vector>
+#include <random>
 
 class World;
 
@@ -11,7 +12,7 @@ using Measurement = std::vector<LandmarkDistance>;
 using Measurements = std::vector<Measurement>;
 //using Position = std::pair<double, double>;
 //using Positions = std::vector<Position>;
-using Displacement = std::pair<double, double>;
+using Displacement = std::pair<double, double>;	// (dx from previous x, dy from previous y)
 using Displacements = std::vector<Displacement>;
 
 class Robot
@@ -28,8 +29,12 @@ public:
 private:
 
 	Measurement sense() const;
+	Displacement wander();
 
-	double x, y;	// TODO: change to double
+	double x, y;	
 	World& world;
+
+	// As long as we are not using threads thread_local is not necessary here.
+	static thread_local std::mt19937 randomEngine;
 };	// Robot
 

@@ -2,6 +2,11 @@
 #include "world.h"
 
 #include <exception>
+#include <cmath>
+//#include <numbers>
+
+thread_local std::mt19937 Robot::randomEngine(std::random_device{}());
+
 
 //Robot::Robot(int x, int y, World& world)
 Robot::Robot(double x, double y, World& world)
@@ -64,3 +69,26 @@ Measurement Robot::sense() const
 
 	return measurement;
 }	// sense
+
+
+Displacement Robot::wander()
+{
+	// As long as we are not using threads, static can be used instead of thread_local.
+	// The Standard Library doesn't define pi, hence std::acos(-1) is used to calculate it.
+	thread_local std::uniform_real_distribution<double> orientDist(0, 2*std::acos(-1));
+	
+	double dx = 0, dy = 0;
+
+	do	// try to move the robot until we succeed
+	{
+		double orientation = orientDist(Robot::randomEngine);
+
+		dx = this->moveDistance * std::cos(orientation);
+		dy = this->moveDistance * std::sin(orientation);
+
+		distortMotion(dx, dy);
+
+	} while (!this->move(dx, dy));
+
+	return Displacement(dx, dy);
+}	// move
