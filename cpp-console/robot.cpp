@@ -5,7 +5,7 @@
 #include <cmath>
 //#include <numbers>
 
-thread_local std::mt19937 Robot::randomEngine(std::random_device{}());
+//thread_local std::mt19937 Robot::randomEngine(std::random_device{}());
 
 
 //Robot::Robot(int x, int y, World& world)
@@ -81,7 +81,8 @@ Displacement Robot::wander()
 
 	do	// try to move the robot until we succeed
 	{
-		double orientation = orientDist(Robot::randomEngine);
+		//double orientation = orientDist(Robot::randomEngine);
+		double orientation = orientDist(World::getRandomEngine());
 
 		dx = this->moveDistance * std::cos(orientation);
 		dy = this->moveDistance * std::sin(orientation);

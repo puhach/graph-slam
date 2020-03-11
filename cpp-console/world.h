@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <random>
 
 class World
 {
@@ -19,6 +20,8 @@ public:
 	int getWidth() const noexcept { return this->width; }
 
 	int getHeight() const noexcept { return this->height; }
+
+	static std::mt19937& getRandomEngine();
 
 private:
 	int width, height;

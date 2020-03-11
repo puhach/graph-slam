@@ -48,19 +48,15 @@ World::World(int width, int height, int nLandmarks)
     if (width > MaxWorld || height > MaxWorld)
         throw std::invalid_argument(std::string("The world is too large."));
 
-    
-    // Seed with a real random value, if available
-    std::random_device r;
 
-    // Choose a random mean between 1 and 6
-    //std::default_random_engine e1(r());
-    std::mt19937 gen(r());
-    std::uniform_int_distribution<int> uniform_dist;
+    // Initialize the landmark positions from a uniform random distribution.
+
+    thread_local std::uniform_int_distribution<int> uniform_dist;
 
     for (auto& [x, y] : this->landmarks)
     {
-        x = uniform_dist(gen) % width;
-        y = uniform_dist(gen) % height;
+        x = uniform_dist(World::getRandomEngine()) % width;
+        y = uniform_dist(World::getRandomEngine()) % height;
     }
 
     /*
@@ -85,6 +81,16 @@ void World::getWorldSize(int& width, int& height) const noexcept
 {
     width = this->width;
     height = this->height;
+}
+
+
+
+std::mt19937& World::getRandomEngine()
+{
+    // Seed with a real random value, if available. As long as we are not using 
+    // threads thread_local could be replaced with static.
+    thread_local std::mt19937 randomEngine(std::random_device{}()); 
+    return randomEngine;
 }
 
 

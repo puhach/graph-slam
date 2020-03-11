@@ -34,7 +34,7 @@ private:
 	double x, y;	
 	World& world;
 
-	// As long as we are not using threads thread_local is not necessary here.
-	static thread_local std::mt19937 randomEngine;
+	
+	//static thread_local std::mt19937 randomEngine;
 };	// Robot
 
