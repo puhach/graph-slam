@@ -96,4 +96,18 @@ Displacement Robot::wander()
 	} while (!this->move(dx, dy));
 
 	return Displacement(dx, dy);
+}	// wander
+
+
+bool Robot::move(double dx, double dy)
+{
+	double newX = this->x + dx, newY = this->y + dy;
+
+	if (newX < 0 || newX >= this->world.getWidth() || newY < 0 || newY >= this->world.getHeight())
+		return false;
+
+	this->x = newX;
+	this->y = newY;
+
+	return true;
 }	// move

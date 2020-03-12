@@ -30,8 +30,9 @@ public:
 
 private:
 
-	Measurement sense() const;
+	Measurement sense() const;	
 	Displacement wander();
+	bool move(double dx, double dy);
 
 	double x, y, sensorRange, stepSize, measurementNoise, motionNoise;
 	World& world;
