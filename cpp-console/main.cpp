@@ -28,7 +28,7 @@ int main()
         
         // create the robot at position (3; 4) in the world
         //Robot& robot = world.getRobot();
-        Robot robot(3, 4, world);
+        Robot robot(3, 4, 2, 1, 1.0, 1.0, world);
 
         /*
         // simulate robot motions and measurements over 50 time steps

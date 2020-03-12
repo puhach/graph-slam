@@ -22,7 +22,9 @@ public:
 	enum { MaxTimeSteps = 1000 };
 
 	//Robot(int x, int y, World &world);
-	Robot(double x, double y, World &world);
+	Robot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world);
+
+	// TODO: add getters and setters for the Robot's parameters
 
 	std::pair<Measurements, Displacements> moveAndSense(int timesteps);
 
@@ -31,7 +33,7 @@ private:
 	Measurement sense() const;
 	Displacement wander();
 
-	double x, y;	
+	double x, y, sensorRange, stepSize, measurementNoise, motionNoise;
 	World& world;
 
 	

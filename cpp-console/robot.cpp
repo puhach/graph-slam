@@ -9,9 +9,13 @@
 
 
 //Robot::Robot(int x, int y, World& world)
-Robot::Robot(double x, double y, World& world)
-	: x(x >= 0 && x < world.getWidth() ? x : throw std::invalid_argument("Robot X coordinate is out of the world."))
-	, y(y >= 0 && y < world.getHeight() ? y : throw std::invalid_argument("Robot Y coordinate is out of the world."))
+Robot::Robot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise, World& world)
+	: x(x >= 0 && x < world.getWidth() ? x : throw std::invalid_argument("Robot's X coordinate is out of the world."))
+	, y(y >= 0 && y < world.getHeight() ? y : throw std::invalid_argument("Robot's Y coordinate is out of the world."))
+	, sensorRange(sensorRange > 0 ? sensorRange : throw std::invalid_argument("Robot's sensor range is invalid."))
+	, stepSize(stepSize > 0 && stepSize < world.getHeight() && stepSize < world.getWidth() ? stepSize : throw std::invalid_argument("Robot's step size is invalid."))
+	, measurementNoise(measurementNoise > 0 ? measurementNoise : throw std::invalid_argument("Robot's measurement noise is invalid."))
+	, motionNoise(motionNoise > 0 ? motionNoise : throw std::invalid_argument("Robot's motion noise is invalid."))
 	, world(world)
 {
 
@@ -84,8 +88,8 @@ Displacement Robot::wander()
 		//double orientation = orientDist(Robot::randomEngine);
 		double orientation = orientDist(World::getRandomEngine());
 
-		dx = this->moveDistance * std::cos(orientation);
-		dy = this->moveDistance * std::sin(orientation);
+		dx = this->stepSize * std::cos(orientation);
+		dy = this->stepSize * std::sin(orientation);
 
 		distortMotion(dx, dy);
 
