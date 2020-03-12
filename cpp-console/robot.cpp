@@ -14,8 +14,8 @@ Robot::Robot(double x, double y, double sensorRange, double stepSize, double mea
 	, y(y >= 0 && y < world.getHeight() ? y : throw std::invalid_argument("Robot's Y coordinate is out of the world."))
 	, sensorRange(sensorRange > 0 ? sensorRange : throw std::invalid_argument("Robot's sensor range is invalid."))
 	, stepSize(stepSize > 0 && stepSize < world.getHeight() && stepSize < world.getWidth() ? stepSize : throw std::invalid_argument("Robot's step size is invalid."))
-	, measurementNoise(measurementNoise > 0 ? measurementNoise : throw std::invalid_argument("Robot's measurement noise is invalid."))
-	, motionNoise(motionNoise > 0 ? motionNoise : throw std::invalid_argument("Robot's motion noise is invalid."))
+	, measurementNoise(measurementNoise > 0 && measurementNoise < sensorRange ? measurementNoise : throw std::invalid_argument("Robot's measurement noise must be in range (0, sensorRange)."))
+	, motionNoise(motionNoise > 0 && motionNoise < stepSize ? motionNoise : throw std::invalid_argument("Robot's motion noise must be in range (0, stepSize)."))
 	, world(world)
 {
 
@@ -111,3 +111,4 @@ bool Robot::move(double dx, double dy)
 
 	return true;
 }	// move
+
