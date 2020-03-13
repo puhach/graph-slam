@@ -112,3 +112,10 @@ bool Robot::move(double dx, double dy)
 	return true;
 }	// move
 
+void Robot::distortMotion(double& dx, double& dy)
+{
+	thread_local std::uniform_real_distribution<double> motionDist(0, this->motionNoise);
+
+	dx += motionDist(World::getRandomEngine());
+	dy += motionDist(World::getRandomEngine());
+}	// distortMotion
