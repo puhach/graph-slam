@@ -59,11 +59,7 @@ Measurement Robot::sense() const
 		double dx = lkx - this->x;
 		double dy = lky - this->y;
 
-		// Distort the measurement.
-		// TODO: try using something Gaussian kernel to distort farther landmark distances more
-		//double factorX = 1 - std::exp(-dx * dx), factorY = 1 - std::exp(-dy * dy);
-		//dx += rand()*measurementNoise*factorX
-		//dy += rand()*measurementNoise*factorY
+		// Distort the measurement.		
 		distortMeasurement(dx, dy);
 		
 		if (dx * dx + dy * dy <= this->sensorRange)
@@ -112,10 +108,26 @@ bool Robot::move(double dx, double dy)
 	return true;
 }	// move
 
-void Robot::distortMotion(double& dx, double& dy)
+
+void Robot::distortMotion(double& dx, double& dy)	// TODO: add const here
 {
+	// TODO: remove thread_local because this->motionNoise may be changed
+	// TODO: use motionDist(-this->motionNoise, this->motionNoise)
 	thread_local std::uniform_real_distribution<double> motionDist(0, this->motionNoise);
 
 	dx += motionDist(World::getRandomEngine());
 	dy += motionDist(World::getRandomEngine());
 }	// distortMotion
+
+void Robot::distortMeasurement(double& dx, double& dy)	const
+{
+	// TODO: remove thread_local because this->measurementNoise may be changed
+	thread_local std::uniform_real_distribution<double> measurementDist(-this->measurementNoise, this->measurementNoise);
+
+	// TODO: try using something Gaussian kernel to distort farther landmark distances more
+	//double factorX = 1 - std::exp(-dx * dx), factorY = 1 - std::exp(-dy * dy);
+	//dx += rand()*measurementNoise*factorX
+	//dy += rand()*measurementNoise*factorY
+	dx += measurementDist(World::getRandomEngine());
+	dy += measurementDist(World::getRandomEngine());
+}	// distortMeasurement

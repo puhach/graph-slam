@@ -34,6 +34,7 @@ private:
 	Displacement wander();
 	bool move(double dx, double dy);
 	void distortMotion(double& dx, double& dy);
+	void distortMeasurement(double& dx, double& dy) const;
 
 	double x, y, sensorRange, stepSize, measurementNoise, motionNoise;
 	World& world;
