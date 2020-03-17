@@ -33,7 +33,7 @@ private:
 	Measurement sense() const;	
 	Displacement wander();
 	bool move(double dx, double dy);
-	void distortMotion(double& dx, double& dy);
+	void distortMotion(double& dx, double& dy) const;
 	void distortMeasurement(double& dx, double& dy) const;
 
 	double x, y, sensorRange, stepSize, measurementNoise, motionNoise;

@@ -26,12 +26,15 @@ std::pair<Measurements, Displacements> Robot::moveAndSense(int timesteps)
 	if (timesteps < 1 || timesteps > MaxTimeSteps)
 		throw std::invalid_argument("The number of time steps is invalid.");
 
+	// TODO: we may need to make it a member data so as not to pass to the localize() method.
 	// There is an additional measurement and displacement for the initial position.
 	Measurements measurements(timesteps+1);
 	Displacements displacements(timesteps+1);
 
 	// The initial position is represented as a displacement from the world origin (0; 0).
 	// TODO: try not to use the initial position, because in practice it may be unknown.
+	// Probably, we should not even have (x, y) as Robot's members, because, strictly speaking,
+	// the robot doesn't know it's real position.
 	measurements[0] = std::move(this->sense());
 	displacements[0] = Displacement(this->x, this->y);
 	//double x0 = 0, y0 = 0;
@@ -109,7 +112,7 @@ bool Robot::move(double dx, double dy)
 }	// move
 
 
-void Robot::distortMotion(double& dx, double& dy)	// TODO: add const here
+void Robot::distortMotion(double& dx, double& dy) const
 {
 	// TODO: remove thread_local because this->motionNoise may be changed
 	// TODO: use motionDist(-this->motionNoise, this->motionNoise)
