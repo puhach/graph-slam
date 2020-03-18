@@ -21,6 +21,10 @@ public:
 
 	int getHeight() const noexcept { return this->height; }
 
+	std::size_t getLandmarkNum() const { return this->landmarks.size(); }
+
+	std::pair<double, double> getLandmark(int lkIndex) const;
+
 	static std::mt19937& getRandomEngine();
 
 private:

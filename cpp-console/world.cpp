@@ -85,6 +85,12 @@ void World::getWorldSize(int& width, int& height) const noexcept
 
 
 
+std::pair<double, double> World::getLandmark(int lkIndex) const
+{
+    // If lkIndex is not within the range of the landmarks vector, an exception of type std::out_of_range is thrown.
+    return this->landmarks.at(lkIndex);
+} // getLandmark
+
 std::mt19937& World::getRandomEngine()
 {
     // Seed with a real random value, if available. As long as we are not using 
