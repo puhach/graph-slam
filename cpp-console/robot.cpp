@@ -115,8 +115,7 @@ bool Robot::move(double dx, double dy)
 void Robot::distortMotion(double& dx, double& dy) const
 {
 	// TODO: remove thread_local because this->motionNoise may be changed
-	// TODO: use motionDist(-this->motionNoise, this->motionNoise)
-	thread_local std::uniform_real_distribution<double> motionDist(0, this->motionNoise);
+	thread_local std::uniform_real_distribution<double> motionDist(-this->motionNoise, this->motionNoise);
 
 	dx += motionDist(World::getRandomEngine());
 	dy += motionDist(World::getRandomEngine());
