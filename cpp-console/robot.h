@@ -23,6 +23,7 @@ class Robot
 {
 public:
 
+	// TODO: consider using constexpr instead
 	enum { MaxTimeSteps = 1000 };
 
 	//Robot(int x, int y, World &world);
@@ -36,6 +37,8 @@ public:
 
 	Measurements getMeasurements() const { return this->measurements; }
 	Displacements getDisplacements() const { return this->displacements; }
+
+	std::pair<Positions, Positions> localize() const;
 
 private:
 

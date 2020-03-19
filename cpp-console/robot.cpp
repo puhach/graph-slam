@@ -4,6 +4,7 @@
 #include <exception>
 #include <cmath>
 //#include <numbers>
+#include <Eigen/Dense>
 
 //thread_local std::mt19937 Robot::randomEngine(std::random_device{}());
 
@@ -50,6 +51,40 @@ void Robot::moveAndSense(int timesteps)
 	//return { measurements, displacements };
 }	// moveAndSense
 
+
+std::pair<Positions, Positions> Robot::localize() const
+{
+	if (this->measurements.empty())
+		throw std::runtime_error("No measurement data.");
+
+	if (this->measurements.size() != this->displacements.size())
+		throw std::runtime_error("Measurement data is inconsistent with robot displacements.");
+
+	// Initialize the constraints.
+
+	const std::size_t size = this->measurements.size() + this->world.getLandmarkNum();
+	
+	Eigen::MatrixXd omegaX(size, size), omegaY(size, size);
+	omegaX.fill(0);
+	omegaY.fill(0);
+
+	Eigen::VectorXd xiX(size), xiY(size);
+	xiX.fill(0);
+	xiY.fill(0);
+
+	// Here we assume that x0, y0 is the first displacement.
+	// TODO: try not to rely on the initial position as it may not be known.
+	omegaX(0, 0) = 1;
+	xiX(0) = this->displacements[0].first;
+
+	omegaY(0, 0) = 1;
+	xiY(0) = this->displacements[0].second;
+
+
+
+	//Positions 
+	return std::pair<Positions, Positions>();
+}	// localize
 
 Measurement Robot::sense() const
 {
