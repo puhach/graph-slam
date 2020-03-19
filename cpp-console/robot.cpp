@@ -21,31 +21,33 @@ Robot::Robot(double x, double y, double sensorRange, double stepSize, double mea
 
 }
 
-std::pair<Measurements, Displacements> Robot::moveAndSense(int timesteps)
+//std::pair<Measurements, Displacements> Robot::moveAndSense(int timesteps)
+void Robot::moveAndSense(int timesteps)
 {
 	if (timesteps < 1 || timesteps > MaxTimeSteps)
 		throw std::invalid_argument("The number of time steps is invalid.");
 
-	// TODO: we may need to make it a member data so as not to pass to the localize() method.
 	// There is an additional measurement and displacement for the initial position.
-	Measurements measurements(timesteps+1);
-	Displacements displacements(timesteps+1);
+	this->measurements.resize(static_cast<std::size_t>(timesteps) + 1);
+	this->displacements.resize(static_cast<std::size_t>(timesteps) + 1);
+	//Measurements measurements(timesteps+1);
+	//Displacements displacements(timesteps+1);
 
 	// The initial position is represented as a displacement from the world origin (0; 0).
 	// TODO: try not to use the initial position, because in practice it may be unknown.
 	// Probably, we should not even have (x, y) as Robot's members, because, strictly speaking,
 	// the robot doesn't know it's real position.
-	measurements[0] = std::move(this->sense());
-	displacements[0] = Displacement(this->x, this->y);
+	this->measurements[0] = std::move(this->sense());
+	this->displacements[0] = Displacement(this->x, this->y);
 	//double x0 = 0, y0 = 0;
 
 	for (int t = 1; t <= timesteps; ++t)
 	{
-		measurements[t] = std::move(sense());		
-		displacements[t] = this->wander();	// returns the displacement from the previous position
+		this->measurements[t] = std::move(sense());		
+		this->displacements[t] = this->wander();	// returns the displacement from the previous position
 	}
 
-	return { measurements, displacements };
+	//return { measurements, displacements };
 }	// moveAndSense
 
 

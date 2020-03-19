@@ -14,6 +14,10 @@ using Measurements = std::vector<Measurement>;
 //using Positions = std::vector<Position>;
 using Displacement = std::pair<double, double>;	// (dx from previous x, dy from previous y)
 using Displacements = std::vector<Displacement>;
+//using RobotPosition = std::pair<double, double>;
+//using LandmarkPosition = std::tuple<int, double, double>;
+using Position = std::pair<double, double>;	// Landmark or Robot position
+using Positions = std::vector<Position>;
 
 class Robot
 {
@@ -26,7 +30,12 @@ public:
 
 	// TODO: add getters and setters for the Robot's parameters
 
-	std::pair<Measurements, Displacements> moveAndSense(int timesteps);
+	void moveAndSense(int timesteps);
+	//std::pair<Measurements, Displacements> moveAndSense(int timesteps);
+	//std::pair<Positions, Positions> localize();
+
+	Measurements getMeasurements() const { return this->measurements; }
+	Displacements getDisplacements() const { return this->displacements; }
 
 private:
 
@@ -39,7 +48,7 @@ private:
 	double x, y, sensorRange, stepSize, measurementNoise, motionNoise;
 	World& world;
 
-	
-	//static thread_local std::mt19937 randomEngine;
+	Measurements measurements;
+	Displacements displacements;
 };	// Robot
 
