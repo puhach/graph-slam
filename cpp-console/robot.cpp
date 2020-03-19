@@ -44,7 +44,7 @@ void Robot::moveAndSense(int timesteps)
 
 	for (int t = 1; t <= timesteps; ++t)
 	{
-		this->measurements[t] = std::move(sense());		
+		this->measurements[t] = std::move(this->sense());		
 		this->displacements[t] = this->wander();	// returns the displacement from the previous position
 	}
 
@@ -124,7 +124,7 @@ Measurement Robot::sense() const
 		// Distort the measurement.		
 		distortMeasurement(dx, dy);
 		
-		if (dx * dx + dy * dy <= this->sensorRange)
+		if (dx * dx + dy * dy <= this->sensorRange*this->sensorRange)
 			measurement.emplace_back(i, dx, dy);
 		//if (() + ())
 	}
