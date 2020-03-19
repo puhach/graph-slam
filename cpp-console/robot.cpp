@@ -81,6 +81,28 @@ std::pair<Positions, Positions> Robot::localize() const
 	xiY(0) = this->displacements[0].second;
 
 
+	// Set measurement constraints.
+
+	void addConstraints(Eigen::MatrixXd & omega, Eigen::VectorXd & xi, int i, int j, double d, double noise);
+
+	const int m = static_cast<int>(this->measurements.size());
+
+	for (int t = 0; t < m; ++t)
+	{
+		for (const auto & [lk, dx, dy] : this->measurements[t])
+		{
+
+			// dx = Lx[lk] - x[t]
+			addConstraints(omegaX, xiX, t, m + lk, -dx, this->measurementNoise);	// x[t] - Lx[lk] = -dx
+			addConstraints(omegaX, xiX, m + lk, t, dx, this->measurementNoise);		// Lx[lk] - x[t] = dx
+
+			// dy = Ly[lk] - y[t]
+			addConstraints(omegaY, xiY, t, m + lk, -dy, this->measurementNoise);	// y[t] - Ly[lk] = -dy
+			addConstraints(omegaY, xiY, m + lk, t, dy, this->measurementNoise);		// Ly[lk] - y[t] = dy
+		}
+	}	// t
+
+	// Set motion constraints
 
 	//Positions 
 	return std::pair<Positions, Positions>();
@@ -170,3 +192,12 @@ void Robot::distortMeasurement(double& dx, double& dy)	const
 	dx += measurementDist(World::getRandomEngine());
 	dy += measurementDist(World::getRandomEngine());
 }	// distortMeasurement
+
+
+
+void addConstraints(Eigen::MatrixXd& omega, Eigen::VectorXd& xi, int i, int j, double d, double noise)
+{
+	omega(i, j) += 1.0 / noise;
+	omega(j, i) -= 1.0 / noise;
+	xi(i) += d / noise;
+}

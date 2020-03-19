@@ -4,6 +4,8 @@
 #include <vector>
 #include <random>
 
+//#include <Eigen/Dense>
+
 class World;
 
 // TODO: perhaps, rename it to LandmarkDisplacement or LkDisplacement
@@ -45,8 +47,11 @@ private:
 	Measurement sense() const;	
 	Displacement wander();
 	bool move(double dx, double dy);
+	
 	void distortMotion(double& dx, double& dy) const;
 	void distortMeasurement(double& dx, double& dy) const;
+
+	//static void addConstraints(Eigen::MatrixXd &omega, Eigen::VectorXd &xi, int i, int j, double d, double noise);
 
 	double x, y, sensorRange, stepSize, measurementNoise, motionNoise;
 	World& world;
