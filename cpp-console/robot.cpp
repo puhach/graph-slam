@@ -121,7 +121,32 @@ std::pair<Positions, Positions> Robot::localize() const
 	}	// t
 
 
-	return std::pair<Positions, Positions>();
+	// Compute the best estimate for the robot and landmarks positions.
+
+	Eigen::VectorXd muX = omegaX.colPivHouseholderQr().solve(xiX);
+	Eigen::VectorXd muY = omegaY.colPivHouseholderQr().solve(xiY);
+	//Eigen::VectorXd muX = omegaX.fullPivHouseholderQr().solve(xiX);
+	//Eigen::VectorXd muY = omegaY.fullPivHouseholderQr().solve(xiY);
+	//Eigen::VectorXd muX = omegaX.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(xiX);
+	//Eigen::VectorXd muY = omegaY.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(xiY);
+	//Eigen::VectorXd muX = omegaX.inverse() * xiX;
+	//Eigen::VectorXd muY = omegaY.inverse() * xiY;
+	//std::cout << muX.rows() << std::endl;
+	//std::cout << muX << std::endl << muY << std::endl;
+
+	Positions robotPositions(this->measurements.size());
+	for (int t = 0; t < m; ++t)
+	{
+		robotPositions[t] = Position(muX(t), muY(t));
+	}
+
+	Positions landmarkLocations(this->world.getLandmarkNum());
+	for (int lk = 0; lk < this->world.getLandmarkNum(); ++lk)
+	{
+		landmarkLocations[lk] = Position(muX(m + lk), muY(m + lk));
+	}
+
+	return std::pair<Positions, Positions>(robotPositions, landmarkLocations);
 }	// localize
 
 Measurement Robot::sense() const
@@ -213,7 +238,11 @@ void Robot::distortMeasurement(double& dx, double& dy)	const
 
 void addConstraints(Eigen::MatrixXd& omega, Eigen::VectorXd& xi, int i, int j, double d, double noise)
 {
+	// TODO: perhaps, it's better to use exp(-noise)
 	omega(i, i) += 1.0 / noise;
 	omega(i, j) -= 1.0 / noise;
 	xi(i) += d / noise;
+	/*omega(i, i) += 1.0;
+	omega(i, j) -= 1.0;
+	xi(i) += d;*/
 }
