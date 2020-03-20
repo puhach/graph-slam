@@ -104,6 +104,23 @@ std::pair<Positions, Positions> Robot::localize() const
 		}
 	}	// t
 
+
+	// Set motion constraints.
+
+	for (int t = 1; t < m; ++t)
+	{
+		// dx = x[t] - x[t-1]
+
+		addConstraints(omegaX, xiX, t, t - 1, this->displacements[t].first, this->motionNoise);	// x[t] - x[t-1] = dx
+		addConstraints(omegaX, xiX, t - 1, t, -this->displacements[t].first, this->motionNoise);	// x[t-1] - x[t] = -dx
+
+		// dy = y[t] - y[t-1]
+
+		addConstraints(omegaY, xiY, t, t - 1, this->displacements[t].second, this->motionNoise);	// y[t] - y[t-1] = dy
+		addConstraints(omegaY, xiY, t - 1, t, -this->displacements[t].second, this->motionNoise);	// y[t-1] - y[t] = -dy
+	}	// t
+
+
 	return std::pair<Positions, Positions>();
 }	// localize
 
