@@ -93,18 +93,17 @@ std::pair<Positions, Positions> Robot::localize() const
 		{
 
 			// dx = Lx[lk] - x[t]
+			
 			addConstraints(omegaX, xiX, t, m + lk, -dx, this->measurementNoise);	// x[t] - Lx[lk] = -dx
 			addConstraints(omegaX, xiX, m + lk, t, dx, this->measurementNoise);		// Lx[lk] - x[t] = dx
 
 			// dy = Ly[lk] - y[t]
+			
 			addConstraints(omegaY, xiY, t, m + lk, -dy, this->measurementNoise);	// y[t] - Ly[lk] = -dy
 			addConstraints(omegaY, xiY, m + lk, t, dy, this->measurementNoise);		// Ly[lk] - y[t] = dy
 		}
 	}	// t
 
-	// Set motion constraints
-
-	//Positions 
 	return std::pair<Positions, Positions>();
 }	// localize
 
@@ -197,7 +196,7 @@ void Robot::distortMeasurement(double& dx, double& dy)	const
 
 void addConstraints(Eigen::MatrixXd& omega, Eigen::VectorXd& xi, int i, int j, double d, double noise)
 {
-	omega(i, j) += 1.0 / noise;
-	omega(j, i) -= 1.0 / noise;
+	omega(i, i) += 1.0 / noise;
+	omega(i, j) -= 1.0 / noise;
 	xi(i) += d / noise;
 }
