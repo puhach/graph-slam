@@ -37,15 +37,15 @@ void Robot::moveAndSense(int timesteps)
 	// The initial position is represented as a displacement from the world origin (0; 0).
 	// TODO: try not to use the initial position, because in practice it may be unknown.
 	// Probably, we should not even have (x, y) as Robot's members, because, strictly speaking,
-	// the robot doesn't know it's real position.
-	this->measurements[0] = std::move(this->sense());
+	// the robot doesn't know it's real position.	
 	this->displacements[0] = Displacement(this->x, this->y);
 	//double x0 = 0, y0 = 0;
+	this->measurements[0] = std::move(this->sense());
 
 	for (int t = 1; t <= timesteps; ++t)
-	{
-		this->measurements[t] = std::move(this->sense());		
+	{		
 		this->displacements[t] = this->wander();	// returns the displacement from the previous position
+		this->measurements[t] = std::move(this->sense());
 	}
 
 	//return { measurements, displacements };
@@ -79,6 +79,13 @@ std::pair<Positions, Positions> Robot::localize() const
 
 	omegaY(0, 0) = 1;
 	xiY(0) = this->displacements[0].second;
+
+	//// !TEST!
+	//omegaX(0, 0) = 1;
+	//xiX(0) = 10;
+
+	//omegaY(0, 0) = 1;
+	//xiY(0) = 10;
 
 
 	// Set measurement constraints.
@@ -133,6 +140,15 @@ std::pair<Positions, Positions> Robot::localize() const
 	//Eigen::VectorXd muY = omegaY.inverse() * xiY;
 	//std::cout << muX.rows() << std::endl;
 	//std::cout << muX << std::endl << muY << std::endl;
+
+
+	//std::cout << "xiX:" << std::endl;
+	//std::cout << xiX << std::endl;
+	//double relativeErrorX = (omegaX * muX - xiX).norm() / xiX.norm()
+	//	,  relativeErrorY = (omegaY * muY - xiY).norm() / xiY.norm();
+
+	//std::cout << "Relative error: " << relativeErrorX << " " << relativeErrorY << std::endl;
+	//std::cout << omegaX * muX << std::endl;
 
 	Positions robotPositions(this->measurements.size());
 	for (int t = 0; t < m; ++t)
