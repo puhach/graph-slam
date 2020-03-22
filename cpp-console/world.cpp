@@ -51,12 +51,15 @@ World::World(int width, int height, int nLandmarks)
 
     // Initialize the landmark positions from a uniform random distribution.
 
-    thread_local std::uniform_int_distribution<int> uniform_dist;
+    //thread_local std::uniform_int_distribution<int> uniform_dist;
+    std::uniform_int_distribution<int> randomX(0, width - 1), randomY(0, height - 1);
 
     for (auto& [x, y] : this->landmarks)
     {
-        x = uniform_dist(World::getRandomEngine()) % width;
-        y = uniform_dist(World::getRandomEngine()) % height;
+        //x = uniform_dist(World::getRandomEngine()) % width;
+        //y = uniform_dist(World::getRandomEngine()) % height;
+        x = randomX(World::getRandomEngine());
+        y = randomY(World::getRandomEngine());
     }
 
     /*

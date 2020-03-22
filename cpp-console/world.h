@@ -9,6 +9,7 @@ class World
 	friend std::ostream& operator << (std::ostream& ostream, const World& world);
 
 public:
+	// TODO: consider using constexpr instead
 	enum { MinWorld = 3, MaxWorld = 1000, MinLandmarks = 0, MaxLandmarks = 1000};
 
 	World(int width, int height, int nLandmarks);
