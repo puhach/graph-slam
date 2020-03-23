@@ -31,6 +31,7 @@ public:
 	//Robot(int x, int y, World &world);
 	//Robot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world);
 	Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise);
+	virtual ~Robot() noexcept = default;
 
 	// TODO: add getters and setters for the Robot's parameters
 
