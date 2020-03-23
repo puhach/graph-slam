@@ -1,12 +1,24 @@
 #pragma once
 
+#include "robot.h"
+
 #include <vector>
 #include <iostream>
 #include <random>
 
+
+
 class World
 {
 	friend std::ostream& operator << (std::ostream& ostream, const World& world);
+
+
+	class RobotWrapper : public Robot
+	{
+	public:
+		RobotWrapper(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise)
+			: Robot(sensorRange, stepSize, measurementNoise, motionNoise) {}
+	};	// RobotWrapper
 
 
 public:
