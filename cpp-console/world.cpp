@@ -94,6 +94,24 @@ std::pair<double, double> World::getLandmark(int lkIndex) const
     return this->landmarks.at(lkIndex);
 } // getLandmark
 
+Robot& World::createRobot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise)
+{
+    try
+    {
+        this->robotX = x >= 0 && x < this->width ? x : throw std::invalid_argument("Robot's X coordinate is out of the world.");
+        this->robotY = y >= 0 && y < this->height ? y : throw std::invalid_argument("Robot's Y coordinate is out of the world."));
+
+        new (&this->robot) RobotWrapper(sensorRange, stepSize, measurementNoise, motionNoise);
+
+        return this->robot;
+    }
+    catch (std::exception&)
+    {
+        this->robotX = this->robotY = -1;
+        throw;
+    }
+}   // createRobot
+
 std::mt19937& World::getRandomEngine()
 {
     // Seed with a real random value, if available. As long as we are not using 

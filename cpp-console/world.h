@@ -8,6 +8,7 @@ class World
 {
 	friend std::ostream& operator << (std::ostream& ostream, const World& world);
 
+
 public:
 	// TODO: consider using constexpr instead
 	enum { MinWorld = 3, MaxWorld = 1000, MinLandmarks = 0, MaxLandmarks = 1000};
@@ -26,11 +27,15 @@ public:
 
 	std::pair<double, double> getLandmark(int lkIndex) const;
 
+	Robot& createRobot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise);
+
 	static std::mt19937& getRandomEngine();
 
 private:
 	int width, height;
 	std::vector<std::pair<double, double> > landmarks;	
+	RobotWrapper robot;
+	double robotX, robotY;
 };	// World
 
 
