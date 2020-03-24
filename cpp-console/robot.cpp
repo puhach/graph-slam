@@ -181,6 +181,11 @@ void Robot::sense()
 	throw std::runtime_error("Not implemented");
 }
 
+void Robot::roamAndSense()
+{
+	throw std::runtime_error("Not implemented");
+}
+
 //Measurement Robot::sense() const
 //{
 //	Measurement measurement;

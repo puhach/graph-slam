@@ -35,6 +35,7 @@ public:
 	// TODO: add getters and setters for the Robot's parameters
 
 	void sense();
+	void roamAndSense();
 
 	void moveAndSense(int timesteps);
 	//std::pair<Measurements, Displacements> moveAndSense(int timesteps);
