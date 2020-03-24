@@ -27,36 +27,46 @@ int main()
 
         
         // Create the robot at position (3; 4) in the world.
-        //Robot robot(3, 4, 20, 1, 0.008, 0.008, world);
-        Robot robot(3, 4, 20, 1, 0.08, 0.08, world);
+        double rx0 = 3, ry0 = 4;
+        ///Robot robot(3, 4, 20, 1, 0.008, 0.008, world);
+        //Robot robot(3, 4, 20, 1, 0.08, 0.08, world);
+        Robot& robot = world.createRobot(rx0, ry0, 20, 1, 0.008, 0.008);
 
         
         // Simulate robot motions and measurements over 50 time steps.
-        robot.moveAndSense(15);
-        //auto [measurements, displacements] = robot.moveAndSense(50);
-        //robot.moveAndSense(50);
-        //auto [motions, measurements] = robot.getHistory();
-        //std::cout << robot << std::endl;
+        
+        constexpr int timesteps = 15;
 
-        // Print actual robot positions.
-        // In this implementation we assume that the initial position is known and the first displacement 
-        // equals to the distance from the world origin.
-        // TODO: try not to use the initial position info in the displacement history.
-        std::cout << "Actual robot positions:" << std::endl;
-        double x = 0, y = 0;
-        //for (const auto& d : displacements)
-        for (const auto &d : robot.getDisplacements())
+        std::cout << "Actual robot positions:" << std::endl << rx0 << " " << ry0 << std::endl;
+
+        robot.sense(); // record zero displacement and landmark distances
+
+        for (int t = 1; t <= timesteps; ++t)
         {
-            x += d.first;
-            y += d.second;
+            robot.roamAndSense();
 
-            std::cout << x << " " << y << std::endl;
+            std::cout << world.getRobotX() << " " << world.getRobotY() << std::endl;
         }
+
+        //// Print actual robot positions.
+        //// In this implementation we assume that the initial position is known and the first displacement 
+        //// equals to the distance from the world origin.
+        //// TODO: try not to use the initial position info in the displacement history.
+        //
+        //double x = 0, y = 0;
+        ////for (const auto& d : displacements)
+        //for (const auto &d : robot.getDisplacements())
+        //{
+        //    x += d.first;
+        //    y += d.second;
+
+        //    std::cout << x << " " << y << std::endl;
+        //}
 
         
         // Run SLAM to estimate positions of the robot and landmarks.
 
-        auto [estPositions, estLandmarks] = robot.localize();
+        auto [estPositions, estLandmarks] = robot.localize(rx0, ry0);
         
 
         // Print estimated positions and landmarks.
