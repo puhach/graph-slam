@@ -39,27 +39,26 @@ void Robot::moveAndSense(int timesteps)
 	if (timesteps < 1 || timesteps > MaxTimeSteps)
 		throw std::invalid_argument("The number of time steps is invalid.");
 
-	// There is an additional measurement and displacement for the initial position.
-	this->measurements.resize(static_cast<std::size_t>(timesteps) + 1);
-	this->displacements.resize(static_cast<std::size_t>(timesteps) + 1);
-	//Measurements measurements(timesteps+1);
-	//Displacements displacements(timesteps+1);
+	//// There is an additional measurement and displacement for the initial position.
+	//this->measurements.resize(static_cast<std::size_t>(timesteps) + 1);
+	//this->displacements.resize(static_cast<std::size_t>(timesteps) + 1);
+	////Measurements measurements(timesteps+1);
+	////Displacements displacements(timesteps+1);
 
-	// The initial position is represented as a displacement from the world origin (0; 0).
-	// TODO: try not to use the initial position, because in practice it may be unknown.
-	// Probably, we should not even have (x, y) as Robot's members, because, strictly speaking,
-	// the robot doesn't know it's real position.	
-	this->displacements[0] = Displacement(this->x, this->y);
-	//double x0 = 0, y0 = 0;
-	this->measurements[0] = std::move(this->sense());
+	//// The initial position is represented as a displacement from the world origin (0; 0).
+	//// TODO: try not to use the initial position, because in practice it may be unknown.
+	//// Probably, we should not even have (x, y) as Robot's members, because, strictly speaking,
+	//// the robot doesn't know it's real position.	
+	//this->displacements[0] = Displacement(this->x, this->y);
+	////double x0 = 0, y0 = 0;
+	//this->measurements[0] = std::move(this->sense());
 
-	for (int t = 1; t <= timesteps; ++t)
-	{		
-		this->displacements[t] = this->wander();	// returns the displacement from the previous position
-		this->measurements[t] = std::move(this->sense());
-	}
+	//for (int t = 1; t <= timesteps; ++t)
+	//{		
+	//	this->displacements[t] = this->wander();	// returns the displacement from the previous position
+	//	this->measurements[t] = std::move(this->sense());
+	//}
 
-	//return { measurements, displacements };
 }	// moveAndSense
 
 
@@ -211,42 +210,42 @@ void Robot::roamAndSense()
 //}	// sense
 
 
-Displacement Robot::wander()
-{
-	// As long as we are not using threads, static can be used instead of thread_local.
-	// The Standard Library doesn't define pi, hence std::acos(-1) is used to calculate it.
-	thread_local std::uniform_real_distribution<double> orientDist(0, 2*std::acos(-1));
-	
-	double dx = 0, dy = 0;
-
-	do	// try to move the robot until we succeed
-	{
-		//double orientation = orientDist(Robot::randomEngine);
-		double orientation = orientDist(World::getRandomEngine());
-
-		dx = this->stepSize * std::cos(orientation);
-		dy = this->stepSize * std::sin(orientation);
-
-		distortMotion(dx, dy);
-
-	} while (!this->move(dx, dy));
-
-	return Displacement(dx, dy);
-}	// wander
-
-
-bool Robot::move(double dx, double dy)
-{
-	double newX = this->x + dx, newY = this->y + dy;
-
-	if (newX < 0 || newX >= this->world.getWidth() || newY < 0 || newY >= this->world.getHeight())
-		return false;
-
-	this->x = newX;
-	this->y = newY;
-
-	return true;
-}	// move
+//Displacement Robot::wander()
+//{
+//	// As long as we are not using threads, static can be used instead of thread_local.
+//	// The Standard Library doesn't define pi, hence std::acos(-1) is used to calculate it.
+//	thread_local std::uniform_real_distribution<double> orientDist(0, 2*std::acos(-1));
+//	
+//	double dx = 0, dy = 0;
+//
+//	do	// try to move the robot until we succeed
+//	{
+//		//double orientation = orientDist(Robot::randomEngine);
+//		double orientation = orientDist(World::getRandomEngine());
+//
+//		dx = this->stepSize * std::cos(orientation);
+//		dy = this->stepSize * std::sin(orientation);
+//
+//		distortMotion(dx, dy);
+//
+//	} while (!this->move(dx, dy));
+//
+//	return Displacement(dx, dy);
+//}	// wander
+//
+//
+//bool Robot::move(double dx, double dy)
+//{
+//	double newX = this->x + dx, newY = this->y + dy;
+//
+//	if (newX < 0 || newX >= this->world.getWidth() || newY < 0 || newY >= this->world.getHeight())
+//		return false;
+//
+//	this->x = newX;
+//	this->y = newY;
+//
+//	return true;
+//}	// move
 
 
 void Robot::distortMotion(double& dx, double& dy) const

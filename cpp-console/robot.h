@@ -53,8 +53,8 @@ protected:
 private:
 
 	//Measurement sense() const;	
-	Displacement wander();
-	bool move(double dx, double dy);
+	//Displacement wander();
+	//bool move(double dx, double dy);
 	
 	void distortMotion(double& dx, double& dy) const;
 	void distortMeasurement(double& dx, double& dy) const;
