@@ -10,7 +10,7 @@
 
 
 
-class RobotWrapper : public Robot
+class World::RobotWrapper : public Robot
 {
 public:
     RobotWrapper(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World& world)
