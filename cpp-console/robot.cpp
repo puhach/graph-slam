@@ -22,11 +22,12 @@
 //
 //}
 
-Robot::Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise)
+Robot::Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world)
 	: sensorRange(sensorRange > 0 ? sensorRange : throw std::invalid_argument("Robot's sensor range is invalid."))
 	, stepSize(stepSize > 0 && stepSize < world.getHeight() && stepSize < world.getWidth() ? stepSize : throw std::invalid_argument("Robot's step size is invalid."))
 	, measurementNoise(measurementNoise > 0 && measurementNoise < sensorRange ? measurementNoise : throw std::invalid_argument("Robot's measurement noise must be in range (0, sensorRange)."))
 	, motionNoise(motionNoise > 0 && motionNoise < stepSize ? motionNoise : throw std::invalid_argument("Robot's motion noise must be in range (0, stepSize)."))
+	, world(world)
 {
 
 }
@@ -175,29 +176,34 @@ std::pair<Positions, Positions> Robot::localize() const
 	return std::pair<Positions, Positions>(robotPositions, landmarkLocations);
 }	// localize
 
-Measurement Robot::sense() const
+void Robot::sense()
 {
-	Measurement measurement;
-	measurement.reserve(this->world.getLandmarkNum());
+	throw std::runtime_error("Not implemented");
+}
 
-	for (int i = 0; i < this->world.getLandmarkNum(); ++i)
-	{		
-		auto [lkx, lky] = world.getLandmark(i);
-
-		// Get the distance to the landmark.
-		double dx = lkx - this->x;
-		double dy = lky - this->y;
-
-		// Distort the measurement.		
-		distortMeasurement(dx, dy);
-		
-		if (dx * dx + dy * dy <= this->sensorRange*this->sensorRange)
-			measurement.emplace_back(i, dx, dy);
-		//if (() + ())
-	}
-
-	return measurement;
-}	// sense
+//Measurement Robot::sense() const
+//{
+//	Measurement measurement;
+//	measurement.reserve(this->world.getLandmarkNum());
+//
+//	for (int i = 0; i < this->world.getLandmarkNum(); ++i)
+//	{		
+//		auto [lkx, lky] = world.getLandmark(i);
+//
+//		// Get the distance to the landmark.
+//		double dx = lkx - this->x;
+//		double dy = lky - this->y;
+//
+//		// Distort the measurement.		
+//		distortMeasurement(dx, dy);
+//		
+//		if (dx * dx + dy * dy <= this->sensorRange*this->sensorRange)
+//			measurement.emplace_back(i, dx, dy);
+//		//if (() + ())
+//	}
+//
+//	return measurement;
+//}	// sense
 
 
 Displacement Robot::wander()

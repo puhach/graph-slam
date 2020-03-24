@@ -34,6 +34,8 @@ public:
 
 	// TODO: add getters and setters for the Robot's parameters
 
+	void sense();
+
 	void moveAndSense(int timesteps);
 	//std::pair<Measurements, Displacements> moveAndSense(int timesteps);
 	//std::pair<Positions, Positions> localize();
@@ -49,7 +51,7 @@ protected:
 
 private:
 
-	Measurement sense() const;	
+	//Measurement sense() const;	
 	Displacement wander();
 	bool move(double dx, double dy);
 	
