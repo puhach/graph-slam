@@ -50,6 +50,8 @@ World::World(int width, int height, int nLandmarks)
     : width(width)
     , height(height)
     , landmarks(nLandmarks >= MinLandmarks && nLandmarks <= MaxLandmarks ? nLandmarks : throw std::invalid_argument("Invalid number of landmarks."))
+    , robotX(-1)
+    , robotY(-1)
 {
     if (width < MinWorld || height < MinWorld)
         throw std::invalid_argument(std::string("The world is too small."));
