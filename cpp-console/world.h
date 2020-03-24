@@ -1,25 +1,18 @@
 #pragma once
 
-#include "robot.h"
 
 #include <vector>
 #include <iostream>
 #include <random>
 
+class Robot;
 
 
 class World
 {
 	friend std::ostream& operator << (std::ostream& ostream, const World& world);
 
-
-	class RobotWrapper : public Robot
-	{
-	public:
-		RobotWrapper(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise)
-			: Robot(sensorRange, stepSize, measurementNoise, motionNoise) {}
-	};	// RobotWrapper
-
+	class RobotWrapper;
 
 public:
 	// TODO: consider using constexpr instead
@@ -46,8 +39,9 @@ public:
 private:
 	int width, height;
 	std::vector<std::pair<double, double> > landmarks;	
-	RobotWrapper robot;
+	//RobotWrapper robot;
 	double robotX, robotY;
+	std::unique_ptr<RobotWrapper> robot;
 };	// World
 
 

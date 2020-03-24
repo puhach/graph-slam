@@ -10,6 +10,12 @@
 
 
 
+class RobotWrapper : public Robot
+{
+public:
+    RobotWrapper(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World& world)
+        : Robot(sensorRange, stepSize, measurementNoise, motionNoise, world) {}
+};	// RobotWrapper
 
 
 /*
@@ -99,17 +105,29 @@ std::pair<double, double> World::getLandmark(int lkIndex) const
 
 Robot& World::createRobot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise)
 {
+    RobotWrapper* ptr = this->robot.release();
+
     try
     {
         this->robotX = x >= 0 && x < this->width ? x : throw std::invalid_argument("Robot's X coordinate is out of the world.");
-        this->robotY = y >= 0 && y < this->height ? y : throw std::invalid_argument("Robot's Y coordinate is out of the world."));
+        this->robotY = y >= 0 && y < this->height ? y : throw std::invalid_argument("Robot's Y coordinate is out of the world.");
+                
+        if (ptr)
+        {
+            ptr->~RobotWrapper();
+            new (ptr) RobotWrapper(sensorRange, stepSize, measurementNoise, motionNoise, *this);
+        }
+        else
+        {
+            ptr = new RobotWrapper(sensorRange, stepSize, measurementNoise, motionNoise, *this);
+            this->robot.reset(ptr);
+        }
 
-        new (&this->robot) RobotWrapper(sensorRange, stepSize, measurementNoise, motionNoise);
-
-        return this->robot;
+        return *ptr;
     }
-    catch (std::exception&)
+    catch (...)
     {
+        ::operator delete(ptr);
         this->robotX = this->robotY = -1;
         throw;
     }
