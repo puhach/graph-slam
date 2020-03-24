@@ -30,7 +30,7 @@ public:
 
 	//Robot(int x, int y, World &world);
 	//Robot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world);
-	virtual ~Robot() noexcept = default;
+	//virtual ~Robot() noexcept = default;
 
 	// TODO: add getters and setters for the Robot's parameters
 
@@ -44,7 +44,8 @@ public:
 	std::pair<Positions, Positions> localize() const;
 
 protected:
-	Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise);
+	Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world);
+	virtual ~Robot() noexcept = default;
 
 private:
 
