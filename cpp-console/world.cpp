@@ -91,6 +91,8 @@ World::World(int width, int height, int nLandmarks)
 
 }
 
+
+
 void World::getWorldSize(int& width, int& height) const noexcept
 {
     width = this->width;

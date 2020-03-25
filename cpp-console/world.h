@@ -19,6 +19,7 @@ public:
 	enum { MinWorld = 3, MaxWorld = 1000, MinLandmarks = 0, MaxLandmarks = 1000};
 
 	World(int width, int height, int nLandmarks);
+	
 
 	std::pair<int, int> getWorldSize() const { return { this->width, this->height }; }
 
@@ -33,6 +34,10 @@ public:
 	std::pair<double, double> getLandmark(int lkIndex) const;
 
 	Robot& createRobot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise);
+
+	double getRobotX() const { return this->robotX; }
+
+	double getRobotY() const { return this->robotY; }
 
 	static std::mt19937& getRandomEngine();
 
