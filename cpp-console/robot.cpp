@@ -62,7 +62,7 @@ void Robot::moveAndSense(int timesteps)
 }	// moveAndSense
 
 
-std::pair<Positions, Positions> Robot::localize() const
+std::pair<Positions, Positions> Robot::localize(double x0, double y0) const
 {
 	if (this->measurements.empty())
 		throw std::runtime_error("No measurement data.");
@@ -85,18 +85,12 @@ std::pair<Positions, Positions> Robot::localize() const
 	// Here we assume that x0, y0 is the first displacement.
 	// TODO: try not to rely on the initial position as it may not be known.
 	omegaX(0, 0) = 1;
-	xiX(0) = this->displacements[0].first;
+	xiX(0) = x0; //this->displacements[0].first;
 
 	omegaY(0, 0) = 1;
-	xiY(0) = this->displacements[0].second;
+	xiY(0) = y0; //this->displacements[0].second;
 
-	//// !TEST!
-	//omegaX(0, 0) = 1;
-	//xiX(0) = 10;
-
-	//omegaY(0, 0) = 1;
-	//xiY(0) = 10;
-
+	
 
 	// Set measurement constraints.
 

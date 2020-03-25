@@ -37,14 +37,19 @@ public:
 	void sense();
 	void roamAndSense();
 
+	std::pair<Positions, Positions> localize(double x0, double y0) const;
+
 	void moveAndSense(int timesteps);
+
+
+
 	//std::pair<Measurements, Displacements> moveAndSense(int timesteps);
 	//std::pair<Positions, Positions> localize();
 
-	Measurements getMeasurements() const { return this->measurements; }
-	Displacements getDisplacements() const { return this->displacements; }
+	//Measurements getMeasurements() const { return this->measurements; }
+	//Displacements getDisplacements() const { return this->displacements; }
 
-	std::pair<Positions, Positions> localize() const;
+	//std::pair<Positions, Positions> localize() const;
 
 protected:
 	Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world);
