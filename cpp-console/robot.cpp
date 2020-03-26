@@ -22,12 +22,16 @@
 //
 //}
 
-Robot::Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world)
+Robot::Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world
+			, std::function<bool (World&, double, double)> move
+			, std::function<Measurement (const World&)> senseLandmarks)
 	: sensorRange(sensorRange > 0 ? sensorRange : throw std::invalid_argument("Robot's sensor range is invalid."))
 	, stepSize(stepSize > 0 && stepSize < world.getHeight() && stepSize < world.getWidth() ? stepSize : throw std::invalid_argument("Robot's step size is invalid."))
 	, measurementNoise(measurementNoise > 0 && measurementNoise < sensorRange ? measurementNoise : throw std::invalid_argument("Robot's measurement noise must be in range (0, sensorRange)."))
 	, motionNoise(motionNoise > 0 && motionNoise < stepSize ? motionNoise : throw std::invalid_argument("Robot's motion noise must be in range (0, stepSize)."))
 	, world(world)
+	, move(std::move(move))
+	, senseLandmarks(std::move(senseLandmarks))
 {
 
 }
@@ -169,6 +173,7 @@ std::pair<Positions, Positions> Robot::localize(double x0, double y0) const
 	return std::pair<Positions, Positions>(robotPositions, landmarkLocations);
 }	// localize
 
+// TODO: perhaps, rename it to spotSense()
 void Robot::sense()
 {
 	throw std::runtime_error("Not implemented");
@@ -176,8 +181,7 @@ void Robot::sense()
 
 void Robot::roamAndSense()
 {
-	throw std::runtime_error("Not implemented");
-}
+}	// roamAndSense
 
 //Measurement Robot::sense() const
 //{
@@ -242,28 +246,28 @@ void Robot::roamAndSense()
 //}	// move
 
 
-void Robot::distortMotion(double& dx, double& dy) const
-{
-	// TODO: remove thread_local because this->motionNoise may be changed
-	thread_local std::uniform_real_distribution<double> motionDist(-this->motionNoise, this->motionNoise);
-
-	dx += motionDist(World::getRandomEngine());
-	dy += motionDist(World::getRandomEngine());
-}	// distortMotion
-
-void Robot::distortMeasurement(double& dx, double& dy)	const
-{
-	// TODO: remove thread_local because this->measurementNoise may be changed
-	thread_local std::uniform_real_distribution<double> measurementDist(-this->measurementNoise, this->measurementNoise);
-
-	// TODO: try using something Gaussian kernel to distort farther landmark distances more
-	//double factorX = 1 - std::exp(-dx * dx), factorY = 1 - std::exp(-dy * dy);
-	//dx += rand()*measurementNoise*factorX
-	//dy += rand()*measurementNoise*factorY
-	dx += measurementDist(World::getRandomEngine());
-	dy += measurementDist(World::getRandomEngine());
-}	// distortMeasurement
-
+//void Robot::distortMotion(double& dx, double& dy) const
+//{
+//	// TODO: remove thread_local because this->motionNoise may be changed
+//	thread_local std::uniform_real_distribution<double> motionDist(-this->motionNoise, this->motionNoise);
+//
+//	dx += motionDist(World::getRandomEngine());
+//	dy += motionDist(World::getRandomEngine());
+//}	// distortMotion
+//
+//void Robot::distortMeasurement(double& dx, double& dy)	const
+//{
+//	// TODO: remove thread_local because this->measurementNoise may be changed
+//	thread_local std::uniform_real_distribution<double> measurementDist(-this->measurementNoise, this->measurementNoise);
+//
+//	// TODO: try using something Gaussian kernel to distort farther landmark distances more
+//	//double factorX = 1 - std::exp(-dx * dx), factorY = 1 - std::exp(-dy * dy);
+//	//dx += rand()*measurementNoise*factorX
+//	//dy += rand()*measurementNoise*factorY
+//	dx += measurementDist(World::getRandomEngine());
+//	dy += measurementDist(World::getRandomEngine());
+//}	// distortMeasurement
+//
 
 
 void addConstraints(Eigen::MatrixXd& omega, Eigen::VectorXd& xi, int i, int j, double d, double noise)

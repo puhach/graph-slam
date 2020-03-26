@@ -4,9 +4,12 @@
 #include <vector>
 #include <iostream>
 #include <random>
+#include <functional>
 
 class Robot;
 
+using LandmarkDistance = std::tuple<int, double, double>;	// (landmark_index, horizontal distance to landmark, vertical distance to landmark)
+using Measurement = std::vector<LandmarkDistance>;
 
 class World
 {
@@ -45,6 +48,7 @@ public:
 private:
 
 	bool moveRobot(double dx, double dy);
+	Measurement revealLandmarks() const;
 
 	int width, height;
 	std::vector<std::pair<double, double> > landmarks;	

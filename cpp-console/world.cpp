@@ -13,8 +13,10 @@
 class World::RobotWrapper : public Robot
 {
 public:
-    RobotWrapper(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World& world)
-        : Robot(sensorRange, stepSize, measurementNoise, motionNoise, world) {}
+    RobotWrapper(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World& world
+        , std::function<bool (World&, double dx, double dy)> move
+        , std::function<Measurement (const World&) > senseLandmarks)
+        : Robot(sensorRange, stepSize, measurementNoise, motionNoise, world, std::move(move), std::move(senseLandmarks)) {}
 };	// RobotWrapper
 
 
@@ -122,11 +124,13 @@ Robot& World::createRobot(double x, double y, double sensorRange, double stepSiz
         if (ptr)
         {
             ptr->~RobotWrapper();
-            new (ptr) RobotWrapper(sensorRange, stepSize, measurementNoise, motionNoise, *this);
+            new (ptr) RobotWrapper(sensorRange, stepSize, measurementNoise, motionNoise, *this
+                , &World::moveRobot, &World::revealLandmarks);
         }
         else
         {
-            ptr = new RobotWrapper(sensorRange, stepSize, measurementNoise, motionNoise, *this);
+            ptr = new RobotWrapper(sensorRange, stepSize, measurementNoise, motionNoise, *this
+                , &World::moveRobot, &World::revealLandmarks);
             this->robot.reset(ptr);
         }
 
@@ -152,13 +156,13 @@ bool World::moveRobot(double dx, double dy)
 {
     if (!this->robot)
         throw std::logic_error("Attempted to move a robot which doesn't exist.");
-
-    double newX = this->robotX + dx, newY = this->robotY + dy;
-    
+            
     std::uniform_real_distribution<double> motionDist(-this->robot->getMotionNoise(), this->robot->getMotionNoise());
 
     dx += motionDist(World::getRandomEngine());
     dy += motionDist(World::getRandomEngine());
+
+    double newX = this->robotX + dx, newY = this->robotY + dy;
 
     if (newX < 0 || newX >= this->width || newY < 0 || newY >= this->height)
     	return false;

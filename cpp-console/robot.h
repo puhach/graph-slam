@@ -3,6 +3,7 @@
 #include <tuple>
 #include <vector>
 #include <random>
+#include <functional>
 
 //#include <Eigen/Dense>
 
@@ -52,7 +53,10 @@ public:
 	//std::pair<Positions, Positions> localize() const;
 
 protected:
-	Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world);
+	Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world
+		, std::function<bool (World&, double, double)> move
+		, std::function<Measurement (const World&)> senseLandmarks);
+
 	virtual ~Robot() noexcept = default;
 
 private:
@@ -61,13 +65,15 @@ private:
 	//Displacement wander();
 	//bool move(double dx, double dy);
 	
-	void distortMotion(double& dx, double& dy) const;
-	void distortMeasurement(double& dx, double& dy) const;
+	//void distortMotion(double& dx, double& dy) const;
+	//void distortMeasurement(double& dx, double& dy) const;
 
 	//static void addConstraints(Eigen::MatrixXd &omega, Eigen::VectorXd &xi, int i, int j, double d, double noise);
 
 	double x, y, sensorRange, stepSize, measurementNoise, motionNoise;
 	World& world;
+	std::function<bool(World&, double, double)> move;
+	std::function<Measurement(const World&)> senseLandmarks;
 
 	Measurements measurements;
 	Displacements displacements;
