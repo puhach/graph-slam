@@ -148,6 +148,27 @@ std::mt19937& World::getRandomEngine()
     return randomEngine;
 }
 
+bool World::moveRobot(double dx, double dy)
+{
+    if (!this->robot)
+        throw std::logic_error("Attempted to move a robot which doesn't exist.");
+
+    double newX = this->robotX + dx, newY = this->robotY + dy;
+    
+    std::uniform_real_distribution<double> motionDist(-this->robot->getMotionNoise(), this->robot->getMotionNoise());
+
+    dx += motionDist(World::getRandomEngine());
+    dy += motionDist(World::getRandomEngine());
+
+    if (newX < 0 || newX >= this->width || newY < 0 || newY >= this->height)
+    	return false;
+    
+    this->robotX = newX;
+    this->robotY = newY;
+    
+    return true;
+}   // moveRobot
+
 
 
 

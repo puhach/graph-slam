@@ -43,6 +43,9 @@ public:
 	static std::mt19937& getRandomEngine();
 
 private:
+
+	bool moveRobot(double dx, double dy);
+
 	int width, height;
 	std::vector<std::pair<double, double> > landmarks;	
 	//RobotWrapper robot;
