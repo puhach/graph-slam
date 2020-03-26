@@ -91,6 +91,9 @@ World::World(int width, int height, int nLandmarks)
 
 }
 
+// Define the destructor in the source file to fix the incomplete type error around unique_ptr<RobotWrapper>.
+// https://stackoverflow.com/questions/9954518/stdunique-ptr-with-an-incomplete-type-wont-compile
+World::~World() noexcept = default;
 
 
 void World::getWorldSize(int& width, int& height) const noexcept

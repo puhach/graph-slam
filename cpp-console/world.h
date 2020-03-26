@@ -19,6 +19,7 @@ public:
 	enum { MinWorld = 3, MaxWorld = 1000, MinLandmarks = 0, MaxLandmarks = 1000};
 
 	World(int width, int height, int nLandmarks);
+	~World() noexcept;
 	
 
 	std::pair<int, int> getWorldSize() const { return { this->width, this->height }; }
