@@ -181,6 +181,26 @@ void Robot::sense()
 
 void Robot::roamAndSense()
 {
+	//throw std::runtime_error("Not implemented");
+	thread_local std::uniform_real_distribution<double> orientDist(0, 2 * std::acos(-1));
+		
+	double dx = 0, dy = 0;
+	
+	do	// try to move the robot until we succeed
+	{
+		//double orientation = orientDist(Robot::randomEngine);
+		double orientation = orientDist(World::getRandomEngine());
+	
+		dx = this->stepSize * std::cos(orientation);
+		dy = this->stepSize * std::sin(orientation);
+	
+		//distortMotion(dx, dy);
+	
+	} while (!this->move(this->world, dx, dy));
+	
+	//return Displacement(dx, dy);
+	this->measurements.emplace_back(this->senseLandmarks(this->world));
+	this->displacements.emplace_back(dx, dy);
 }	// roamAndSense
 
 //Measurement Robot::sense() const
