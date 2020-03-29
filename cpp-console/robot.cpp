@@ -176,8 +176,9 @@ std::pair<Positions, Positions> Robot::localize(double x0, double y0) const
 // TODO: perhaps, rename it to spotSense()
 void Robot::sense()
 {
-	throw std::runtime_error("Not implemented");
-}
+	this->measurements.emplace_back(this->senseLandmarks(this->world));
+	this->displacements.emplace_back(0, 0);
+}	// sense 
 
 void Robot::roamAndSense()
 {
