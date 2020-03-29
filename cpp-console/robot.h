@@ -33,7 +33,13 @@ public:
 	//Robot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world);
 	//virtual ~Robot() noexcept = default;
 
-	// TODO: add getters and setters for the Robot's parameters
+	double getSensorRange() const { return this->sensorRange; }
+
+	double getStepSize() const { return this->stepSize; }
+
+	double getMeasurementNoise() const { return this->measurementNoise; }
+
+	double getMotionNoise() const { return this->motionNoise; }
 
 	void sense();
 	void roamAndSense();
