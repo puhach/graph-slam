@@ -173,6 +173,36 @@ bool World::moveRobot(double dx, double dy)
     return true;
 }   // moveRobot
 
+Measurement World::revealLandmarks() const
+{
+    if (!this->robot)
+        throw std::logic_error("Attempted to sense landmarks while the robot doesn't exist.");
+
+    Measurement measurement;
+    std::uniform_real_distribution<double> measurementDist(-this->robot->getMeasurementNoise(), this->robot->getMeasurementNoise());
+    
+    //for (const auto& [lkx, lky] : this->landmarks)
+    for (int i = 0; i < this->landmarks.size(); ++i)
+    {
+        const auto & [lkx, lky] = this->landmarks[i];
+
+        // Get the distance to the landmark.
+		double dx = lkx - this->robotX;
+		double dy = lky - this->robotY;
+				
+        if (dx * dx + dy * dy <= this->robot->getSensorRange() * this->robot->getSensorRange())
+        {
+            // Distort the measurement.		
+            dx += measurementDist(World::getRandomEngine());
+            dy += measurementDist(World::getRandomEngine());
+            //distortMeasurement(dx, dy);
+
+            measurement.emplace_back(i, dx, dy);
+        }
+    }
+    return measurement;
+}   // revealLandmarks
+
 
 
 
