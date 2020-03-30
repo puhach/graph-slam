@@ -15,7 +15,7 @@ class World::RobotWrapper : public Robot
 public:
     RobotWrapper(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World& world
         , std::function<bool (World&, double dx, double dy)> move
-        , std::function<Measurement (const World&) > senseLandmarks)
+        , std::function<Measurement (const World&, double range, double noise) > senseLandmarks)
         : Robot(sensorRange, stepSize, measurementNoise, motionNoise, world, std::move(move), std::move(senseLandmarks)) {}
 };	// RobotWrapper
 
@@ -173,13 +173,14 @@ bool World::moveRobot(double dx, double dy)
     return true;
 }   // moveRobot
 
-Measurement World::revealLandmarks() const
+Measurement World::revealLandmarks(double range, double noise) const
 {
     if (!this->robot)
         throw std::logic_error("Attempted to sense landmarks while the robot doesn't exist.");
 
     Measurement measurement;
-    std::uniform_real_distribution<double> measurementDist(-this->robot->getMeasurementNoise(), this->robot->getMeasurementNoise());
+    //std::uniform_real_distribution<double> measurementDist(-this->robot->getMeasurementNoise(), this->robot->getMeasurementNoise());
+    std::uniform_real_distribution<double> measurementDist(-noise, +noise);
     
     //for (const auto& [lkx, lky] : this->landmarks)
     for (int i = 0; i < this->landmarks.size(); ++i)
@@ -190,7 +191,8 @@ Measurement World::revealLandmarks() const
 		double dx = lkx - this->robotX;
 		double dy = lky - this->robotY;
 				
-        if (dx * dx + dy * dy <= this->robot->getSensorRange() * this->robot->getSensorRange())
+        //if (dx * dx + dy * dy <= this->robot->getSensorRange() * this->robot->getSensorRange())
+        if (dx * dx + dy * dy <= range * range)
         {
             // Distort the measurement.		
             dx += measurementDist(World::getRandomEngine());

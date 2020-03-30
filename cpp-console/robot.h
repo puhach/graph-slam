@@ -61,7 +61,7 @@ public:
 protected:
 	Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world
 		, std::function<bool (World&, double, double)> move
-		, std::function<Measurement (const World&)> senseLandmarks);
+		, std::function<Measurement (const World&, double, double)> senseLandmarks);
 
 	virtual ~Robot() noexcept = default;
 
@@ -78,8 +78,8 @@ private:
 
 	double x, y, sensorRange, stepSize, measurementNoise, motionNoise;
 	World& world;
-	std::function<bool(World&, double, double)> move;
-	std::function<Measurement(const World&)> senseLandmarks;
+	std::function<bool(World&, double dx, double dy)> move;
+	std::function<Measurement(const World&, double range, double noise)> senseLandmarks;
 
 	Measurements measurements;
 	Displacements displacements;

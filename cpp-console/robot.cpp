@@ -22,9 +22,10 @@
 //
 //}
 
+// TODO: perhaps, we need a Sensor class to group several parameters
 Robot::Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world
-			, std::function<bool (World&, double, double)> move
-			, std::function<Measurement (const World&)> senseLandmarks)
+			, std::function<bool (World&, double dx, double dy)> move
+			, std::function<Measurement (const World&, double range, double noise)> senseLandmarks)
 	: sensorRange(sensorRange > 0 ? sensorRange : throw std::invalid_argument("Robot's sensor range is invalid."))
 	, stepSize(stepSize > 0 && stepSize < world.getHeight() && stepSize < world.getWidth() ? stepSize : throw std::invalid_argument("Robot's step size is invalid."))
 	, measurementNoise(measurementNoise > 0 && measurementNoise < sensorRange ? measurementNoise : throw std::invalid_argument("Robot's measurement noise must be in range (0, sensorRange)."))
@@ -176,7 +177,7 @@ std::pair<Positions, Positions> Robot::localize(double x0, double y0) const
 // TODO: perhaps, rename it to spotSense()
 void Robot::sense()
 {
-	this->measurements.emplace_back(this->senseLandmarks(this->world));
+	this->measurements.emplace_back(this->senseLandmarks(this->world, this->sensorRange, this->measurementNoise));
 	this->displacements.emplace_back(0, 0);
 }	// sense 
 
@@ -200,7 +201,7 @@ void Robot::roamAndSense()
 	} while (!this->move(this->world, dx, dy));
 	
 	//return Displacement(dx, dy);
-	this->measurements.emplace_back(this->senseLandmarks(this->world));
+	this->measurements.emplace_back(this->senseLandmarks(this->world, this->sensorRange, this->measurementNoise));
 	this->displacements.emplace_back(dx, dy);
 }	// roamAndSense
 

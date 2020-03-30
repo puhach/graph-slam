@@ -33,8 +33,8 @@ public:
 
 	int getHeight() const noexcept { return this->height; }
 
+	// TODO: we, probably, don't need these methods anymore
 	std::size_t getLandmarkNum() const { return this->landmarks.size(); }
-
 	std::pair<double, double> getLandmark(int lkIndex) const;
 
 	Robot& createRobot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise);
@@ -47,8 +47,9 @@ public:
 
 private:
 
+	// TODO: add noise parameter to this function
 	bool moveRobot(double dx, double dy);
-	Measurement revealLandmarks() const;
+	Measurement revealLandmarks(double range, double noise) const;
 
 	int width, height;
 	std::vector<std::pair<double, double> > landmarks;	
