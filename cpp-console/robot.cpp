@@ -24,7 +24,7 @@
 
 // TODO: perhaps, we need a Sensor class to group several parameters
 Robot::Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world
-			, std::function<bool (World&, double dx, double dy)> move
+			, std::function<bool (World&, double dx, double dy, double noise)> move
 			, std::function<Measurement (const World&, double range, double noise)> senseLandmarks)
 	: sensorRange(sensorRange > 0 ? sensorRange : throw std::invalid_argument("Robot's sensor range is invalid."))
 	, stepSize(stepSize > 0 && stepSize < world.getHeight() && stepSize < world.getWidth() ? stepSize : throw std::invalid_argument("Robot's step size is invalid."))
@@ -198,7 +198,7 @@ void Robot::roamAndSense()
 	
 		//distortMotion(dx, dy);
 	
-	} while (!this->move(this->world, dx, dy));
+	} while (!this->move(this->world, dx, dy, this->motionNoise));
 	
 	//return Displacement(dx, dy);
 	this->measurements.emplace_back(this->senseLandmarks(this->world, this->sensorRange, this->measurementNoise));

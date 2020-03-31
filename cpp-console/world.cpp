@@ -14,7 +14,7 @@ class World::RobotWrapper : public Robot
 {
 public:
     RobotWrapper(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World& world
-        , std::function<bool (World&, double dx, double dy)> move
+        , std::function<bool (World&, double dx, double dy, double noise)> move
         , std::function<Measurement (const World&, double range, double noise) > senseLandmarks)
         : Robot(sensorRange, stepSize, measurementNoise, motionNoise, world, std::move(move), std::move(senseLandmarks)) {}
 };	// RobotWrapper
@@ -152,12 +152,13 @@ std::mt19937& World::getRandomEngine()
     return randomEngine;
 }
 
-bool World::moveRobot(double dx, double dy)
+bool World::moveRobot(double dx, double dy, double noise)
 {
     if (!this->robot)
         throw std::logic_error("Attempted to move a robot which doesn't exist.");
             
-    std::uniform_real_distribution<double> motionDist(-this->robot->getMotionNoise(), this->robot->getMotionNoise());
+    //std::uniform_real_distribution<double> motionDist(-this->robot->getMotionNoise(), this->robot->getMotionNoise());
+    std::uniform_real_distribution<double> motionDist(-noise, +noise);
 
     dx += motionDist(World::getRandomEngine());
     dy += motionDist(World::getRandomEngine());

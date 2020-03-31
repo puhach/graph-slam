@@ -48,7 +48,7 @@ public:
 private:
 
 	// TODO: add noise parameter to this function
-	bool moveRobot(double dx, double dy);
+	bool moveRobot(double dx, double dy, double noise);
 	Measurement revealLandmarks(double range, double noise) const;
 
 	int width, height;
