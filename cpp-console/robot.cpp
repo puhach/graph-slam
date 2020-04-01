@@ -1,10 +1,13 @@
 #include "robot.h"
 #include "world.h"
+#include "graphslam.h"
 
 #include <exception>
 #include <cmath>
 //#include <numbers>
-#include <Eigen/Dense>
+
+
+template std::pair<Positions, Positions>  Robot::localize<GraphSlam>(GraphSlam method) const;
 
 //thread_local std::mt19937 Robot::randomEngine(std::random_device{}());
 
@@ -67,7 +70,9 @@ void Robot::moveAndSense(int timesteps)
 }	// moveAndSense
 
 
-std::pair<Positions, Positions> Robot::localize(double x0, double y0) const
+//std::pair<Positions, Positions> Robot::localize(double x0, double y0) const
+template <class Method>
+std::pair<Positions, Positions> Robot::localize(Method method) const
 {
 	if (this->measurements.empty())
 		throw std::runtime_error("No measurement data.");
@@ -75,103 +80,7 @@ std::pair<Positions, Positions> Robot::localize(double x0, double y0) const
 	if (this->measurements.size() != this->displacements.size())
 		throw std::runtime_error("Measurement data is inconsistent with robot displacements.");
 
-	// Initialize the constraints.
-
-	const std::size_t size = this->measurements.size() + this->world.getLandmarkNum();
-	
-	Eigen::MatrixXd omegaX(size, size), omegaY(size, size);
-	omegaX.fill(0);
-	omegaY.fill(0);
-
-	Eigen::VectorXd xiX(size), xiY(size);
-	xiX.fill(0);
-	xiY.fill(0);
-
-	// Here we assume that x0, y0 is the first displacement.
-	// TODO: try not to rely on the initial position as it may not be known.
-	omegaX(0, 0) = 1;
-	xiX(0) = x0; //this->displacements[0].first;
-
-	omegaY(0, 0) = 1;
-	xiY(0) = y0; //this->displacements[0].second;
-
-	
-
-	// Set measurement constraints.
-
-	void addConstraints(Eigen::MatrixXd & omega, Eigen::VectorXd & xi, int i, int j, double d, double noise);
-
-	const int m = static_cast<int>(this->measurements.size());
-
-	for (int t = 0; t < m; ++t)
-	{
-		for (const auto & [lk, dx, dy] : this->measurements[t])
-		{
-
-			// dx = Lx[lk] - x[t]
-			
-			addConstraints(omegaX, xiX, t, m + lk, -dx, this->measurementNoise);	// x[t] - Lx[lk] = -dx
-			addConstraints(omegaX, xiX, m + lk, t, dx, this->measurementNoise);		// Lx[lk] - x[t] = dx
-
-			// dy = Ly[lk] - y[t]
-			
-			addConstraints(omegaY, xiY, t, m + lk, -dy, this->measurementNoise);	// y[t] - Ly[lk] = -dy
-			addConstraints(omegaY, xiY, m + lk, t, dy, this->measurementNoise);		// Ly[lk] - y[t] = dy
-		}
-	}	// t
-
-
-	// Set motion constraints.
-
-	for (int t = 1; t < m; ++t)
-	{
-		// dx = x[t] - x[t-1]
-
-		addConstraints(omegaX, xiX, t, t - 1, this->displacements[t].first, this->motionNoise);	// x[t] - x[t-1] = dx
-		addConstraints(omegaX, xiX, t - 1, t, -this->displacements[t].first, this->motionNoise);	// x[t-1] - x[t] = -dx
-
-		// dy = y[t] - y[t-1]
-
-		addConstraints(omegaY, xiY, t, t - 1, this->displacements[t].second, this->motionNoise);	// y[t] - y[t-1] = dy
-		addConstraints(omegaY, xiY, t - 1, t, -this->displacements[t].second, this->motionNoise);	// y[t-1] - y[t] = -dy
-	}	// t
-
-
-	// Compute the best estimate for the robot and landmarks positions.
-
-	Eigen::VectorXd muX = omegaX.colPivHouseholderQr().solve(xiX);
-	Eigen::VectorXd muY = omegaY.colPivHouseholderQr().solve(xiY);
-	//Eigen::VectorXd muX = omegaX.fullPivHouseholderQr().solve(xiX);
-	//Eigen::VectorXd muY = omegaY.fullPivHouseholderQr().solve(xiY);
-	//Eigen::VectorXd muX = omegaX.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(xiX);
-	//Eigen::VectorXd muY = omegaY.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(xiY);
-	//Eigen::VectorXd muX = omegaX.inverse() * xiX;
-	//Eigen::VectorXd muY = omegaY.inverse() * xiY;
-	//std::cout << muX.rows() << std::endl;
-	//std::cout << muX << std::endl << muY << std::endl;
-
-
-	//std::cout << "xiX:" << std::endl;
-	//std::cout << xiX << std::endl;
-	//double relativeErrorX = (omegaX * muX - xiX).norm() / xiX.norm()
-	//	,  relativeErrorY = (omegaY * muY - xiY).norm() / xiY.norm();
-
-	//std::cout << "Relative error: " << relativeErrorX << " " << relativeErrorY << std::endl;
-	//std::cout << omegaX * muX << std::endl;
-
-	Positions robotPositions(this->measurements.size());
-	for (int t = 0; t < m; ++t)
-	{
-		robotPositions[t] = Position(muX(t), muY(t));
-	}
-
-	Positions landmarkLocations(this->world.getLandmarkNum());
-	for (int lk = 0; lk < this->world.getLandmarkNum(); ++lk)
-	{
-		landmarkLocations[lk] = Position(muX(m + lk), muY(m + lk));
-	}
-
-	return std::pair<Positions, Positions>(robotPositions, landmarkLocations);
+	return method.solve(this->measurements, this->displacements, this->measurementNoise, this->motionNoise);
 }	// localize
 
 // TODO: perhaps, rename it to spotSense()
@@ -292,13 +201,3 @@ void Robot::roamAndSense()
 //
 
 
-void addConstraints(Eigen::MatrixXd& omega, Eigen::VectorXd& xi, int i, int j, double d, double noise)
-{
-	// TODO: perhaps, it's better to use exp(-noise)
-	omega(i, i) += 1.0 / noise;
-	omega(i, j) -= 1.0 / noise;
-	xi(i) += d / noise;
-	/*omega(i, i) += 1.0;
-	omega(i, j) -= 1.0;
-	xi(i) += d;*/
-}

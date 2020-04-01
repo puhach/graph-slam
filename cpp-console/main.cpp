@@ -4,6 +4,7 @@
 
 #include "world.h"
 #include "robot.h"
+#include "graphslam.h"
 
 #include <iostream>
 //#include <Eigen/Dense>
@@ -66,7 +67,8 @@ int main()
         
         // Run SLAM to estimate positions of the robot and landmarks.
 
-        auto [estPositions, estLandmarks] = robot.localize(rx0, ry0);
+        auto [estPositions, estLandmarks] = robot.localize(GraphSlam(rx0, ry0, static_cast<int>(world.getLandmarkNum())));
+        //auto [estPositions, estLandmarks] = robot.localize(rx0, ry0);
         
 
         // Print estimated positions and landmarks.
