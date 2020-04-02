@@ -1,5 +1,8 @@
 #pragma once
 
+#include "position.h"
+#include "measurement.h"
+
 #include <tuple>
 #include <vector>
 #include <random>
@@ -9,18 +12,6 @@
 
 class World;
 
-// TODO: perhaps, rename it to LandmarkDisplacement or LkDisplacement
-using LandmarkDistance = std::tuple<int, double, double>;	// (landmark_index, horizontal distance to landmark, vertical distance to landmark)
-using Measurement = std::vector<LandmarkDistance>;
-using Measurements = std::vector<Measurement>;
-//using Position = std::pair<double, double>;
-//using Positions = std::vector<Position>;
-using Displacement = std::pair<double, double>;	// (dx from previous x, dy from previous y)
-using Displacements = std::vector<Displacement>;
-//using RobotPosition = std::pair<double, double>;
-//using LandmarkPosition = std::tuple<int, double, double>;
-using Position = std::pair<double, double>;	// Landmark or Robot position
-using Positions = std::vector<Position>;
 
 class Robot
 {
@@ -44,7 +35,9 @@ public:
 	void sense();
 	void roamAndSense();
 
-	std::pair<Positions, Positions> localize(double x0, double y0) const;
+	//std::pair<Positions, Positions> localize(double x0, double y0) const;
+	template <class Localizer>
+	std::pair<Positions, Positions> localize(const Localizer &localizer) const;
 
 	void moveAndSense(int timesteps);
 
@@ -74,9 +67,9 @@ private:
 	//void distortMotion(double& dx, double& dy) const;
 	//void distortMeasurement(double& dx, double& dy) const;
 
-	//static void addConstraints(Eigen::MatrixXd &omega, Eigen::VectorXd &xi, int i, int j, double d, double noise);
+	
 
-	double x, y, sensorRange, stepSize, measurementNoise, motionNoise;
+	double sensorRange, stepSize, measurementNoise, motionNoise;
 	World& world;
 	std::function<bool(World&, double dx, double dy, double noise)> move;
 	std::function<Measurement(const World&, double range, double noise)> senseLandmarks;

@@ -7,7 +7,7 @@
 //#include <numbers>
 
 
-template std::pair<Positions, Positions>  Robot::localize<GraphSlam>(GraphSlam method) const;
+template std::pair<Positions, Positions>  Robot::localize<GraphSlam>(const GraphSlam &method) const;
 
 //thread_local std::mt19937 Robot::randomEngine(std::random_device{}());
 
@@ -71,8 +71,8 @@ void Robot::moveAndSense(int timesteps)
 
 
 //std::pair<Positions, Positions> Robot::localize(double x0, double y0) const
-template <class Method>
-std::pair<Positions, Positions> Robot::localize(Method method) const
+template <class Localizer>
+std::pair<Positions, Positions> Robot::localize(const Localizer &localizer) const
 {
 	if (this->measurements.empty())
 		throw std::runtime_error("No measurement data.");
@@ -80,7 +80,7 @@ std::pair<Positions, Positions> Robot::localize(Method method) const
 	if (this->measurements.size() != this->displacements.size())
 		throw std::runtime_error("Measurement data is inconsistent with robot displacements.");
 
-	return method.solve(this->measurements, this->displacements, this->measurementNoise, this->motionNoise);
+	return localizer.localize(this->measurements, this->displacements, this->measurementNoise, this->motionNoise);
 }	// localize
 
 // TODO: perhaps, rename it to spotSense()
