@@ -2,7 +2,7 @@
 
 #include <Eigen/Dense>
 
-std::pair<Positions, Positions> GraphSlam::solve(const Measurements &measurements, 
+std::pair<Positions, Positions> GraphSlam::localize(const Measurements &measurements, 
 	const Displacements &displacements, double measurementNoise, double motionNoise) const
 {
 	// Initialize the constraints.
@@ -102,7 +102,7 @@ std::pair<Positions, Positions> GraphSlam::solve(const Measurements &measurement
 	}
 
 	return std::pair<Positions, Positions>(robotPositions, landmarkLocations);
-}
+}	// localize
 
 void addConstraints(Eigen::MatrixXd& omega, Eigen::VectorXd& xi, int i, int j, double d, double noise)
 {
