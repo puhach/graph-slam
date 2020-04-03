@@ -1,5 +1,7 @@
 #pragma once
 
+#include "lkdistance.h"
+#include "measurement.h"
 
 #include <vector>
 #include <iostream>
@@ -8,8 +10,6 @@
 
 class Robot;
 
-using LandmarkDistance = std::tuple<int, double, double>;	// (landmark_index, horizontal distance to landmark, vertical distance to landmark)
-using Measurement = std::vector<LandmarkDistance>;
 
 class World
 {
