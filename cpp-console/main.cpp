@@ -7,10 +7,6 @@
 #include "graphslam.h"
 
 #include <iostream>
-//#include <Eigen/Dense>
-
-//using namespace std;
-//using namespace Eigen;
 
 
 int main()
@@ -29,8 +25,6 @@ int main()
         
         // Create the robot at position (3; 4) in the world.
         double rx0 = 3, ry0 = 4;
-        ///Robot robot(3, 4, 20, 1, 0.008, 0.008, world);
-        //Robot robot(3, 4, 20, 1, 0.08, 0.08, world);
         Robot& robot = world.createRobot(rx0, ry0, 20, 1, 0.008, 0.008);
 
         
@@ -49,22 +43,7 @@ int main()
             std::cout << world.getRobotX() << " " << world.getRobotY() << std::endl;
         }
 
-        //// Print actual robot positions.
-        //// In this implementation we assume that the initial position is known and the first displacement 
-        //// equals to the distance from the world origin.
-        //// TODO: try not to use the initial position info in the displacement history.
-        //
-        //double x = 0, y = 0;
-        ////for (const auto& d : displacements)
-        //for (const auto &d : robot.getDisplacements())
-        //{
-        //    x += d.first;
-        //    y += d.second;
-
-        //    std::cout << x << " " << y << std::endl;
-        //}
-
-        
+                
         // Run SLAM to estimate positions of the robot and landmarks.
 
         auto [estPositions, estLandmarks] = robot.localize(GraphSlam(rx0, ry0, static_cast<int>(world.getLandmarkNum())));

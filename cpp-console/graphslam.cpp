@@ -71,24 +71,7 @@ std::pair<Positions, Positions> GraphSlam::localize(const Measurements &measurem
 
 	Eigen::VectorXd muX = omegaX.colPivHouseholderQr().solve(xiX);
 	Eigen::VectorXd muY = omegaY.colPivHouseholderQr().solve(xiY);
-	//Eigen::VectorXd muX = omegaX.fullPivHouseholderQr().solve(xiX);
-	//Eigen::VectorXd muY = omegaY.fullPivHouseholderQr().solve(xiY);
-	//Eigen::VectorXd muX = omegaX.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(xiX);
-	//Eigen::VectorXd muY = omegaY.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(xiY);
-	//Eigen::VectorXd muX = omegaX.inverse() * xiX;
-	//Eigen::VectorXd muY = omegaY.inverse() * xiY;
-	//std::cout << muX.rows() << std::endl;
-	//std::cout << muX << std::endl << muY << std::endl;
-
-
-	//std::cout << "xiX:" << std::endl;
-	//std::cout << xiX << std::endl;
-	//double relativeErrorX = (omegaX * muX - xiX).norm() / xiX.norm()
-	//	,  relativeErrorY = (omegaY * muY - xiY).norm() / xiY.norm();
-
-	//std::cout << "Relative error: " << relativeErrorX << " " << relativeErrorY << std::endl;
-	//std::cout << omegaX * muX << std::endl;
-
+	
 	Positions robotPositions(measurements.size());
 	for (int t = 0; t < m; ++t)
 	{
@@ -110,7 +93,4 @@ void addConstraints(Eigen::MatrixXd& omega, Eigen::VectorXd& xi, int i, int j, d
 	omega(i, i) += 1.0 / noise;
 	omega(i, j) -= 1.0 / noise;
 	xi(i) += d / noise;
-	/*omega(i, i) += 1.0;
-	omega(i, j) -= 1.0;
-	xi(i) += d;*/
 }

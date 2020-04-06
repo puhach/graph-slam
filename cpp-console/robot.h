@@ -8,7 +8,6 @@
 #include <random>
 #include <functional>
 
-//#include <Eigen/Dense>
 
 class World;
 
@@ -20,9 +19,7 @@ public:
 	// TODO: consider using constexpr instead
 	enum { MaxTimeSteps = 1000 };
 
-	//Robot(int x, int y, World &world);
-	//Robot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world);
-	//virtual ~Robot() noexcept = default;
+	// TODO: add copy/move constructors and assignment operators
 
 	double getSensorRange() const { return this->sensorRange; }
 
@@ -42,15 +39,6 @@ public:
 	void moveAndSense(int timesteps);
 
 
-
-	//std::pair<Measurements, Displacements> moveAndSense(int timesteps);
-	//std::pair<Positions, Positions> localize();
-
-	//Measurements getMeasurements() const { return this->measurements; }
-	//Displacements getDisplacements() const { return this->displacements; }
-
-	//std::pair<Positions, Positions> localize() const;
-
 protected:
 	Robot(double sensorRange, double stepSize, double measurementNoise, double motionNoise, World &world
 		, std::function<bool (World&, double dx, double dy, double noise)> move
@@ -59,15 +47,6 @@ protected:
 	virtual ~Robot() noexcept = default;
 
 private:
-
-	//Measurement sense() const;	
-	//Displacement wander();
-	//bool move(double dx, double dy);
-	
-	//void distortMotion(double& dx, double& dy) const;
-	//void distortMeasurement(double& dx, double& dy) const;
-
-	
 
 	double sensorRange, stepSize, measurementNoise, motionNoise;
 	World& world;

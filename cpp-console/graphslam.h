@@ -17,7 +17,6 @@ public:
 	std::pair<Positions, Positions> localize(const Measurements &measurements, const Displacements &displacements, double measurementNoise, double motionNoise) const;
 
 private:
-	//static void addConstraints(Eigen::MatrixXd &omega, Eigen::VectorXd &xi, int i, int j, double d, double noise);
 
 	double x0, y0;
 	int nLandmarks;
