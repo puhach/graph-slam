@@ -30,13 +30,15 @@ public:
 	double getMotionNoise() const { return this->motionNoise; }
 
 	void sense();
+	
+	bool moveAndSense(double dx, double dy);
+
 	void roamAndSense();
 
 	//std::pair<Positions, Positions> localize(double x0, double y0) const;
 	template <class Localizer>
 	std::pair<Positions, Positions> localize(const Localizer &localizer) const;
 
-	void moveAndSense(int timesteps);
 
 
 protected:

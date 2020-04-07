@@ -27,16 +27,6 @@ Robot::Robot(double sensorRange, double stepSize, double measurementNoise, doubl
 }
 
 
-// TODO: implement moving by the specified distance
-void Robot::moveAndSense(int timesteps)
-{
-	if (timesteps < 1 || timesteps > MaxTimeSteps)
-		throw std::invalid_argument("The number of time steps is invalid.");
-
-	
-}	// moveAndSense
-
-
 //std::pair<Positions, Positions> Robot::localize(double x0, double y0) const
 template <class Localizer>
 std::pair<Positions, Positions> Robot::localize(const Localizer &localizer) const
@@ -56,6 +46,21 @@ void Robot::sense()
 	this->measurements.emplace_back(this->senseLandmarks(this->world, this->sensorRange, this->measurementNoise));
 	this->displacements.emplace_back(0, 0);
 }	// sense 
+
+
+bool Robot::moveAndSense(double dx, double dy)
+{
+	bool moved = this->move(this->world, dx, dy, this->motionNoise);
+	
+	if (moved)
+	{
+		this->measurements.emplace_back(this->senseLandmarks(this->world, this->sensorRange, this->measurementNoise));
+		this->displacements.emplace_back(dx, dy);
+	}
+
+	return moved;
+}	// moveAndSense
+
 
 void Robot::roamAndSense()
 {
