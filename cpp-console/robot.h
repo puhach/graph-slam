@@ -16,8 +16,6 @@ class Robot
 {
 public:
 
-	// TODO: consider using constexpr instead
-	enum { MaxTimeSteps = 1000 };
 
 	// TODO: add copy/move constructors and assignment operators
 
