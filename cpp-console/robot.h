@@ -44,7 +44,11 @@ protected:
 		, std::function<bool (World&, double dx, double dy, double noise)> move
 		, std::function<Measurement (const World&, double range, double noise)> senseLandmarks);
 
+	Robot(const Robot& other) = delete;
+
 	virtual ~Robot() noexcept = default;
+
+	Robot& operator = (const Robot& other) = delete;
 
 private:
 
