@@ -22,8 +22,14 @@ public:
 	enum { MinWorld = 3, MaxWorld = 1000, MinLandmarks = 0, MaxLandmarks = 1000};
 
 	World(int width, int height, int nLandmarks);
+	
+	World(const World& other) = delete;
+
 	~World() noexcept;
 	
+	World& operator = (const World& other) = delete;
+
+	// TODO: define move constructor and move assignment
 
 	std::pair<int, int> getWorldSize() const { return { this->width, this->height }; }
 
@@ -47,7 +53,6 @@ public:
 
 private:
 
-	// TODO: add noise parameter to this function
 	bool moveRobot(double dx, double dy, double noise);
 	Measurement revealLandmarks(double range, double noise) const;
 
