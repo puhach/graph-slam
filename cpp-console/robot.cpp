@@ -26,6 +26,23 @@ Robot::Robot(double sensorRange, double stepSize, double measurementNoise, doubl
 
 }
 
+// This trick can be used to force the compiler to statically validate noexcept specification:
+//https://akrzemi1.wordpress.com/2015/09/11/declaring-the-move-constructor/
+//Robot::Robot(Robot&& other) noexcept = default;
+
+//Robot::Robot(Robot&& other) noexcept
+//	: sensorRange(other.sensorRange)
+//	, stepSize(other.stepSize)
+//	, measurementNoise(other.measurementNoise)
+//	, motionNoise(other.motionNoise)
+//	, world(other.world)
+//	, move(std::move(other.move))
+//	, senseLandmarks(std::move(other.senseLandmarks))
+//	, measurements(std::move(other.measurements))
+//	, displacements(std::move(other.displacements))
+//{
+//
+//}
 
 //std::pair<Positions, Positions> Robot::localize(double x0, double y0) const
 template <class Localizer>

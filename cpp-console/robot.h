@@ -16,9 +16,6 @@ class Robot
 {
 public:
 
-
-	// TODO: add copy/move constructors and assignment operators
-
 	double getSensorRange() const { return this->sensorRange; }
 
 	double getStepSize() const { return this->stepSize; }
@@ -46,9 +43,14 @@ protected:
 
 	Robot(const Robot& other) = delete;
 
+	Robot(Robot&& other) = default;	// noexcept deduced
+	//Robot(Robot&& other) noexcept = default;	
+
 	virtual ~Robot() noexcept = default;
 
 	Robot& operator = (const Robot& other) = delete;
+
+	Robot& operator = (Robot&& other) = default;	// noexcept deduced
 
 private:
 
