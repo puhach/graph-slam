@@ -24,12 +24,14 @@ public:
 	World(int width, int height, int nLandmarks);
 	
 	World(const World& other) = delete;
+	
+	World(World&& other) = default;
 
 	~World() noexcept;
 	
 	World& operator = (const World& other) = delete;
 
-	// TODO: define move constructor and move assignment
+	World& operator = (World&& other) = default;
 
 	std::pair<int, int> getWorldSize() const { return { this->width, this->height }; }
 
