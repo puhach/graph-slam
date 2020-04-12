@@ -18,8 +18,10 @@ class World
 	class RobotWrapper;
 
 public:
-	// TODO: consider using constexpr instead
-	enum { MinWorld = 3, MaxWorld = 1000, MinLandmarks = 0, MaxLandmarks = 1000};
+	static constexpr int MinWorld = 3;
+	static constexpr int MaxWorld = 1000;
+	static constexpr int MinLandmarks = 0;
+	static constexpr int MaxLandmarks = 1000;
 
 	World(int width, int height, int nLandmarks);
 	
@@ -41,8 +43,8 @@ public:
 
 	int getHeight() const noexcept { return this->height; }
 
-	// TODO: we, probably, don't need these methods anymore
 	std::size_t getLandmarkNum() const { return this->landmarks.size(); }
+
 	std::pair<double, double> getLandmark(int lkIndex) const;
 
 	Robot& createRobot(double x, double y, double sensorRange, double stepSize, double measurementNoise, double motionNoise);
