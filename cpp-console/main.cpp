@@ -5,6 +5,7 @@
 #include "world.h"
 #include "robot.h"
 #include "graphslam.h"
+#include "genetic.h"
 
 #include <iostream>
 
@@ -16,7 +17,7 @@ int main()
         // TODO: enter the world size, the number of landmarks, and the number of time steps
 
         // Initialize the world of size 8 x 10 with 12 landmarks.
-        World world(8, 10, 3);
+        World world(80, 100, 3);
 
         
         // Show the landmarks.
@@ -34,6 +35,10 @@ int main()
 
         std::cout << "Actual robot positions:" << std::endl << rx0 << " " << ry0 << std::endl;
 
+        // TEST!
+        std::vector<std::pair<double,double>> actualRPosV;
+        actualRPosV.emplace_back(rx0, ry0);
+
         robot.sense(); // record zero displacement and landmark distances
 
         for (int t = 1; t <= timesteps; ++t)
@@ -41,13 +46,18 @@ int main()
             robot.roamAndSense();
 
             std::cout << world.getRobotX() << " " << world.getRobotY() << std::endl;
+
+            actualRPosV.emplace_back(world.getRobotX(), world.getRobotY());
         }
 
                 
         // Run SLAM to estimate positions of the robot and landmarks.
 
-        auto [estPositions, estLandmarks] = robot.localize(GraphSlam(rx0, ry0, static_cast<int>(world.getLandmarkNum())));
-        //auto [estPositions, estLandmarks] = robot.localize(rx0, ry0);
+        //auto [estPositions, estLandmarks] = robot.localize(GraphSlam(rx0, ry0, static_cast<int>(world.getLandmarkNum())));
+        //auto [estPositions, estLandmarks] = robot.localize(Genetic(world));
+        Genetic g(world);
+        g.giveRPositions(actualRPosV);
+        auto [estPositions, estLandmarks] = robot.localize(g);
         
 
         // Print estimated positions and landmarks.

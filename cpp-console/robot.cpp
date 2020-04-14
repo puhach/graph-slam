@@ -1,14 +1,15 @@
 #include "robot.h"
 #include "world.h"
 #include "graphslam.h"
+#include "genetic.h"
 
 #include <exception>
 #include <cmath>
 //#include <numbers>
 
 
-template std::pair<Positions, Positions>  Robot::localize<GraphSlam>(const GraphSlam &method) const;
-
+template std::pair<Positions, Positions> Robot::localize<GraphSlam>(const GraphSlam &localizer) const;
+template std::pair<Positions, Positions> Robot::localize<Genetic>(const Genetic& localizer) const;
 
 
 // TODO: perhaps, we need a Sensor class to group several parameters

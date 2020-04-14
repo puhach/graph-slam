@@ -30,7 +30,7 @@ public:
 
 	void roamAndSense();
 
-	//std::pair<Positions, Positions> localize(double x0, double y0) const;
+	// TODO: perhaps, make it inline 
 	template <class Localizer>
 	std::pair<Positions, Positions> localize(const Localizer &localizer) const;
 
