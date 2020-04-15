@@ -17,7 +17,7 @@ int main()
         // TODO: enter the world size, the number of landmarks, and the number of time steps
 
         // Initialize the world of size 8 x 10 with 12 landmarks.
-        World world(80, 100, 3);
+        World world(80, 100, 30);
 
         
         // Show the landmarks.
@@ -26,7 +26,7 @@ int main()
         
         // Create the robot at position (3; 4) in the world.
         double rx0 = 3, ry0 = 4;
-        Robot& robot = world.createRobot(rx0, ry0, 20, 1, 0.008, 0.008);
+        Robot& robot = world.createRobot(rx0, ry0, 200, 1, 0.008, 0.008);
 
         
         // Simulate robot motions and measurements over 50 time steps.
