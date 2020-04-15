@@ -79,7 +79,7 @@ std::pair<Positions, Positions> Genetic::localize(const Measurements& measuremen
 std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const Genetic::Measurements1D& measurements, const Genetic::Displacements1D& displacements
 	, double measurementNoise, double motionNoise, Genetic::Position1D minPos, Genetic::Position1D maxPos, int epochs) const
 {
-	int nCandidates = 2000;
+	int nCandidates = 800;
 	double mutationChance = 0.8;
 	int nTimesteps = measurements.size();
 
@@ -92,6 +92,18 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 
 	// Initialize solution candidates for robot positions and landmark locations.
 
+	auto track = [nTimesteps, minPos, maxPos, &displacements, &posDist, &randomEngine](Positions1D &rposv) {
+		for (int t = 1; t < nTimesteps; ++t)
+		{
+			rposv[t] = rposv[t - 1] + displacements[t];
+			if (rposv[t] < minPos || rposv[t] > maxPos)
+			{
+				rposv[0] = posDist(randomEngine);
+				t = 0;
+				continue;
+			}
+		}
+	};
 	//std::vector<std::pair<Positions, Positions>> candidates(nCandidates);
 
 	//std::vector<std::tuple<XPositions, YPositions, XPositions, YPositions>> candidates(nCandidates);
@@ -113,9 +125,10 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 		
 		rposv.resize(nTimesteps);
 		rposv[0] = posDist(randomEngine);
-		for (int t = 1; t < nTimesteps; ++t)
-			//rposv[t] = std::min(std::max(minPos, rposv[t-1] + displacements[t]), maxPos);
-			rposv[t] = rposv[t - 1] + displacements[t];
+		//for (int t = 1; t < nTimesteps; ++t)
+			///rposv[t] = std::min(std::max(minPos, rposv[t-1] + displacements[t]), maxPos);
+			//rposv[t] = rposv[t - 1] + displacements[t];
+		track(rposv);
 
 		/*rposv.resize(nTimesteps);
 		std::generate(rposv.begin(), rposv.end(), [&randomEngine, &posDist]() -> double {
@@ -132,27 +145,24 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 
 	// Evaluate each solution candidate according to the fitness functions.
 
-	//auto fitness = [&measurements, &displacements, measurementNoise, motionNoise](Positions rposv, Positions lkposv) -> double
+
+	//auto fitness = [&measurements, &displacements, measurementNoise, motionNoise](Positions1D rposv, Positions1D lkposv) -> double
 	//{
 	//	double diff = 0;
 
 	//	for (int t = 1; t < rposv.size(); ++t)
 	//	{
-	//		double candDx = rposv[t].first - rposv[t - 1].first,
-	//				candDy = rposv[t].second - rposv[t - 1].second;
+	//		double candD = rposv[t] - rposv[t - 1];
 
-	//		double givenDx = displacements[t].first,
-	//				givenDy = displacements[t].second;
+	//		double givenD = displacements[t];
 
 	//		//diff += 1/motionNoise * (abs(candDx - givenDx) + abs(candDy - givenDy));
 	//		//diff += (abs(candDx - givenDx) + abs(candDy - givenDy));
-	//		
-	//		double dx = abs(candDx - givenDx), dy = abs(candDy - givenDy);
-	//		if (dx > motionNoise)
-	//			diff += dx*dx;
-	//			
-	//		if (dy > motionNoise)
-	//			diff += dy*dy;
+
+	//		double d = abs(candD - givenD);
+	//		if (d > motionNoise)
+	//			diff += d * d;
+
 	//	}
 
 
@@ -161,25 +171,22 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 	//	{
 	//		const auto& measurement = measurements[t];
 
-	//		for (const auto& [lkIndex, lkDx, lkDy] : measurement)
+	//		for (const auto& [lkIndex, lkD] : measurement)
 	//		{
-	//			double candDx = lkposv[lkIndex].first - rposv[t].first,
-	//				candDy = lkposv[lkIndex].second - rposv[t].second;
+	//			double candD = lkposv[lkIndex] - rposv[t];
 
 	//			//diff += 1 / measurementNoise * (abs(candDx - lkDx) + abs(candDy - lkDy));
 	//			//diff += (abs(candDx - lkDx) + abs(candDy - lkDy));
-	//			double dx = abs(candDx - lkDx), dy = abs(candDy - lkDy);
-	//			if (dx > measurementNoise)
-	//				diff += dx*dx;
-
-	//			if (dy > measurementNoise)
-	//				diff += dy*dy;
+	//			double d = abs(candD - lkD);
+	//			if (d > measurementNoise)
+	//				diff += d * d;
 	//		}	// landmark
 	//	}
 
 	//	// TODO: define eps constant
-	//	return 1/(diff + 1e-8);
+	//	return 1 / (diff + 1e-8);
 	//};
+
 
 	auto fitness = [&measurements, &displacements, measurementNoise, motionNoise](Positions1D rposv, Positions1D lkposv) -> double
 	{
@@ -188,16 +195,11 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 		for (int t = 1; t < rposv.size(); ++t)
 		{
 			double candD = rposv[t] - rposv[t - 1];
-
 			double givenD = displacements[t];
-
-			//diff += 1/motionNoise * (abs(candDx - givenDx) + abs(candDy - givenDy));
-			//diff += (abs(candDx - givenDx) + abs(candDy - givenDy));
-
 			double d = abs(candD - givenD);
-			if (d > motionNoise)
-				diff += d * d;
-
+			//if (d > motionNoise)
+			//	diff += d * d;
+			diff = std::max(diff, d*d);
 		}
 
 
@@ -209,12 +211,10 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 			for (const auto& [lkIndex, lkD] : measurement)
 			{
 				double candD = lkposv[lkIndex] - rposv[t];
-
-				//diff += 1 / measurementNoise * (abs(candDx - lkDx) + abs(candDy - lkDy));
-				//diff += (abs(candDx - lkDx) + abs(candDy - lkDy));
 				double d = abs(candD - lkD);
-				if (d > measurementNoise)
-					diff += d * d;
+				//if (d > measurementNoise)
+				//	diff += d * d;
+				diff = std::max(diff, d * d);
 			}	// landmark
 		}
 
@@ -222,18 +222,21 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 		return 1 / (diff + 1e-8);
 	};
 
+
 	//int bestCandIndex = 0;
 	std::pair<Genetic::Positions1D, Genetic::Positions1D> bestCand = candidates[0];
+	double maxFitness = 0;
 
 	for (int epoch = 1; epoch <= epochs; ++epoch)
 	{
 
 		// For each candidate compute the probability to breed.
 
-		int bestCandIndex = 0;
-		double maxFitness = 0;
-		std::vector<double> probs(nCandidates);
-		for (int i = 0; i < nCandidates; ++i)
+		int bestCandIndex = -1;		
+		//std::vector<double> probs(nCandidates);
+		std::vector<double> probs(candidates.size());
+		//for (int i = 0; i < nCandidates; ++i)
+		for (int i = 0; i < candidates.size(); ++i)
 		{
 			const auto& [rposv, lkposv] = candidates[i];
 			//double f = fitness(candidates[i].first, candidates[i].second);
@@ -243,15 +246,19 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 			{
 				bestCandIndex = i;
 				maxFitness = f;
-
-				//if (maxFitness > )
 			}
 		}
 
-		bestCand = candidates[bestCandIndex];
+		if (bestCandIndex >= 0)
+			bestCand = candidates[bestCandIndex];
 
 		// TEST!
-		if (epoch % 100 == 0)
+		if (maxFitness > 0.1)
+		{
+			fitness(bestCand.first, bestCand.second);
+		}
+
+		if (epoch % 1000 == 0)
 			std::cout << "genetic:" << epoch << " " << maxFitness << std::endl;
 
 		std::discrete_distribution<int> breedDist(probs.begin(), probs.end());
@@ -259,9 +266,10 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 
 		// Select parents.
 
-		//std::vector<std::pair<Positions, Positions>> parents(nCandidates);
-		std::vector<std::pair<Positions1D, Positions1D>> parents(nCandidates);
-		for (int i = 0; i < nCandidates; ++i)
+		//std::vector<std::pair<Positions1D, Positions1D>> parents(nCandidates);
+		std::vector<std::pair<Positions1D, Positions1D>> parents(candidates.size());
+		//for (int i = 0; i < nCandidates; ++i)
+		for (int i = 0; i < candidates.size(); ++i)
 		{
 			int candIndex = breedDist(randomEngine);
 			parents[i] = candidates[candIndex];
@@ -270,7 +278,8 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 
 		// Cross over to produce new candidates.
 
-		for (int i = 0; i < nCandidates; i += 2)
+		//for (int i = 0; i < nCandidates; i += 2)
+		for (int i = 0; i < candidates.size(); i += 2)
 		{
 			//crossOver(parents[i].first, parents[i + 1].first, candidates[i].first, candidates[i + 1].first);
 			crossOver(parents[i].second, parents[i + 1].second, candidates[i].second, candidates[i + 1].second);
@@ -288,36 +297,39 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 		std::discrete_distribution<int> mutationDist({ mutationChance, 1 - mutationChance });	// mutate/not mutate
 		for (auto& cand : candidates)
 		{
+
 			if (mutationDist(randomEngine) == 0)	// mutate?
 			{
 				auto& [rposv, lkposv] = cand;
-				
-				double tmp = rposv[0];
 
+				//mutate(rposv, minPos, maxPos);
+				//rposv[0] = posDist(randomEngine);
 				if (bestCand.first[0] > rposv[0])
 					rposv[0] = (bestCand.first[0] + maxPos) / 2;
 				else
 					rposv[0] = (minPos + bestCand.first[0]) / 2;
 
-				//rposv[0] += bestCand.first[0];
-				//rposv[0] /= 2;
-
-				//mutate(rposv, minPos, maxPos);
-				//rposv[0] = posDist(randomEngine);
-				for (int t = 1; t < nTimesteps; ++t)
+				// Adjust the rest of positions accordingly.
+				track(rposv);
+				/*for (int t = 1; t < nTimesteps; ++t)
 				{
 					rposv[t] = rposv[t - 1] + displacements[t];
-					if (rposv[t] < 0)
+					if (rposv[t] < minPos || rposv[t] > maxPos)
 					{
 						rposv[0] = posDist(randomEngine);
 						t = 0;
 						continue;
 					}
-				}
+				}*/
 
-				
 				mutate(lkposv, minPos, maxPos);
 			}	// mutate
+			else
+			{
+				
+				//rposv[0] += bestCand.first[0];
+				//rposv[0] /= 2;
+			}	// don't mutate
 		}	// cand
 
 	}	// epoch
@@ -341,6 +353,9 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 	//	lkposv[i].first = lkposxv[i];
 	//	lkposv[i].second = lkposyv[i];
 	//}
+
+	double ff = fitness(bestCand.first, bestCand.second);
+	std::cout << "Final fitness:" << ff << std::endl;
 
 	return bestCand;
 	//return candidates[bestCandIndex];

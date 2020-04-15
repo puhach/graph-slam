@@ -35,7 +35,7 @@ public:
 	// TEST!
 	void giveRPositions(const Positions& rposv) { this->actualRPos = rposv; }
 
-	std::pair<Positions, Positions> localize(const Measurements& measurements, const Displacements& displacements, double measurementNoise, double motionNoise, int epochs = 1000) const;
+	std::pair<Positions, Positions> localize(const Measurements& measurements, const Displacements& displacements, double measurementNoise, double motionNoise, int epochs = 100000) const;
 
 private:
 
