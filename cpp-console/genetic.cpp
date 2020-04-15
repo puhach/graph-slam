@@ -98,21 +98,29 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 	std::vector<std::pair<Positions1D, Positions1D>> candidates(nCandidates);
 	for (auto& [rposv, lkposv] : candidates)
 	{
-		// TEST!
-		/*rposv.resize(this->actualRPos.size());
-		for (int i = 0; i < rposv.size(); ++i)
-			rposv[i] = stage == 0 ? this->actualRPos[i].first : this->actualRPos[i].second;
+		//// TEST!
+		//rposv.resize(this->actualRPos.size());
+		//rposv[0] = stage == 0 ? this->actualRPos[0].first : this->actualRPos[1].second;
+		////for (int i = 0; i < rposv.size(); ++i)
+		////	rposv[i] = stage == 0 ? this->actualRPos[i].first : this->actualRPos[i].second;
+		//for (int t = 1; t < nTimesteps; ++t)
+		//	rposv[t] = rposv[t - 1] + displacements[t];
 
-		lkposv.resize(this->world.getLandmarkNum());
+		/*lkposv.resize(this->world.getLandmarkNum());
 		for (int i = 0; i < this->world.getLandmarkNum(); ++i)
 			lkposv[i] = stage == 0 ? this->world.getLandmark(i).first : this->world.getLandmark(i).second;*/
 
 		
-
 		rposv.resize(nTimesteps);
+		rposv[0] = posDist(randomEngine);
+		for (int t = 1; t < nTimesteps; ++t)
+			//rposv[t] = std::min(std::max(minPos, rposv[t-1] + displacements[t]), maxPos);
+			rposv[t] = rposv[t - 1] + displacements[t];
+
+		/*rposv.resize(nTimesteps);
 		std::generate(rposv.begin(), rposv.end(), [&randomEngine, &posDist]() -> double {
 				return posDist(randomEngine);
-			});
+			});*/
 
 		// TODO: try to get rid of this->world
 		lkposv.resize(this->world.getLandmarkNum());
@@ -214,14 +222,15 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 		return 1 / (diff + 1e-8);
 	};
 
-	int bestCandIndex = 0;
+	//int bestCandIndex = 0;
+	std::pair<Genetic::Positions1D, Genetic::Positions1D> bestCand = candidates[0];
 
 	for (int epoch = 1; epoch <= epochs; ++epoch)
 	{
 
 		// For each candidate compute the probability to breed.
 
-		bestCandIndex = 0;
+		int bestCandIndex = 0;
 		double maxFitness = 0;
 		std::vector<double> probs(nCandidates);
 		for (int i = 0; i < nCandidates; ++i)
@@ -232,12 +241,14 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 			probs[i] = f;
 			if (f > maxFitness)
 			{
-				maxFitness = bestCandIndex;
+				bestCandIndex = i;
 				maxFitness = f;
 
 				//if (maxFitness > )
 			}
 		}
+
+		bestCand = candidates[bestCandIndex];
 
 		// TEST!
 		if (epoch % 100 == 0)
@@ -261,10 +272,8 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 
 		for (int i = 0; i < nCandidates; i += 2)
 		{
-			if (epoch % 2)
-				crossOver(parents[i].first, parents[i + 1].first, candidates[i].first, candidates[i + 1].first);
-			else
-				crossOver(parents[i].second, parents[i + 1].second, candidates[i].second, candidates[i + 1].second);
+			//crossOver(parents[i].first, parents[i + 1].first, candidates[i].first, candidates[i + 1].first);
+			crossOver(parents[i].second, parents[i + 1].second, candidates[i].second, candidates[i + 1].second);
 
 			//auto& [rposxv1, rposyv1, lkposxv1, lkposyv1] = parents[i];
 			//auto& [rposxv2, rposyv2, lkposyv2, lkposyv2] = parents[i+1];
@@ -282,10 +291,32 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 			if (mutationDist(randomEngine) == 0)	// mutate?
 			{
 				auto& [rposv, lkposv] = cand;
-				if (epoch % 2)
-					mutate(rposv, minPos, maxPos);
+				
+				double tmp = rposv[0];
+
+				if (bestCand.first[0] > rposv[0])
+					rposv[0] = (bestCand.first[0] + maxPos) / 2;
 				else
-					mutate(lkposv, minPos, maxPos);
+					rposv[0] = (minPos + bestCand.first[0]) / 2;
+
+				//rposv[0] += bestCand.first[0];
+				//rposv[0] /= 2;
+
+				//mutate(rposv, minPos, maxPos);
+				//rposv[0] = posDist(randomEngine);
+				for (int t = 1; t < nTimesteps; ++t)
+				{
+					rposv[t] = rposv[t - 1] + displacements[t];
+					if (rposv[t] < 0)
+					{
+						rposv[0] = posDist(randomEngine);
+						t = 0;
+						continue;
+					}
+				}
+
+				
+				mutate(lkposv, minPos, maxPos);
 			}	// mutate
 		}	// cand
 
@@ -311,9 +342,8 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 	//	lkposv[i].second = lkposyv[i];
 	//}
 
-	//return std::pair<Positions, Positions>(candidates[bestCandIndex].first, candidates[bestCandIndex].second);
-	//return std::pair<Positions, Positions>(rposv, lkposv);
-	return candidates[bestCandIndex];
+	return bestCand;
+	//return candidates[bestCandIndex];
 }	// localize1D
 
 
