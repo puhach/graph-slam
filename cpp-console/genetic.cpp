@@ -17,9 +17,6 @@ std::pair<Positions, Positions> Genetic::localize(const Measurements& measuremen
 	static_assert(std::is_same<std::tuple_element_t<1, LandmarkDistance>, std::tuple_element_t<2, LandmarkDistance>>::value, "Landmark distance types must be the same.");
 	static_assert(std::is_same<std::tuple_element_t<0, Displacement>, std::tuple_element_t<1, Displacement>>::value, "Displacement types must be the same.");
 
-	//ShowType<typename Genetic::LkDistance1D> dummy;
-	//static_assert(std::is_same<typename Genetic::LkDistance1D, double>::value, "LkDistance1D must be double.");
-
 	Measurements1D measurementsX(measurements.size()), measurementsY(measurements.size());
 	for (int t = 0; t < measurements.size(); ++t)
 	{
@@ -83,16 +80,7 @@ std::pair<Positions, Positions> Genetic::localize(const Measurements& measuremen
 std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const Genetic::Measurements1D& measurements, const Genetic::Displacements1D& displacements
 	, double measurementNoise, double motionNoise, Genetic::Position1D minPos, Genetic::Position1D maxPos) const
 {
-	//int printEvery = 100;
-	//int nCandidates = 2000;
-	//double mutationChance = 0.7;
 	int nTimesteps = static_cast<int>(measurements.size());
-
-	// TODO: probably, pass world dimensions and random engine (or maybe use a standalone engine) to the constructor instead of world instance.
-	//thread_local std::mt19937 randomEngine(std::random_device{}());
-	//auto& randomEngine = this->world.getRandomEngine();
-	//std::uniform_real_distribution<double> xDist(0, this->world.getWidth()), yDist(0, this->world.getHeight());
-
 
 	// Narrow down the range of possible starting positions.
 
@@ -112,36 +100,9 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 
 	// Initialize solution candidates for robot positions and landmark locations.
 
-	//auto track = [nTimesteps, minPos, maxPos, &displacements, &posDist, &randomEngine](Positions1D &rposv) {
-	//	for (int t = 1; t < nTimesteps; ++t)
-	//	{
-	//		rposv[t] = rposv[t - 1] + displacements[t];
-	//		if (rposv[t] < minPos || rposv[t] > maxPos)
-	//		{
-	//			rposv[0] = posDist(randomEngine);
-	//			t = 0;
-	//			continue;
-	//		}
-	//	}
-	//};
-	//std::vector<std::pair<Positions, Positions>> candidates(nCandidates);
-
-	//std::vector<std::tuple<XPositions, YPositions, XPositions, YPositions>> candidates(nCandidates);
 	std::vector<std::pair<Positions1D, Positions1D>> candidates(this->nCandidates);
 	for (auto& [rposv, lkposv] : candidates)
 	{
-		//// TEST!
-		//rposv.resize(this->actualRPos.size());
-		//rposv[0] = stage == 0 ? this->actualRPos[0].first : this->actualRPos[1].second;
-		////for (int i = 0; i < rposv.size(); ++i)
-		////	rposv[i] = stage == 0 ? this->actualRPos[i].first : this->actualRPos[i].second;
-		//for (int t = 1; t < nTimesteps; ++t)
-		//	rposv[t] = rposv[t - 1] + displacements[t];
-
-		/*lkposv.resize(this->world.getLandmarkNum());
-		for (int i = 0; i < this->world.getLandmarkNum(); ++i)
-			lkposv[i] = stage == 0 ? this->world.getLandmark(i).first : this->world.getLandmark(i).second;*/
-
 		
 		rposv.resize(nTimesteps);
 		rposv[0] = posDist(this->randomEngine);
@@ -150,10 +111,6 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 			rposv[t] = rposv[t - 1] + displacements[t];
 		//track(rposv);
 
-		/*rposv.resize(nTimesteps);
-		std::generate(rposv.begin(), rposv.end(), [&randomEngine, &posDist]() -> double {
-				return posDist(randomEngine);
-			});*/
 
 		lkposv.resize(this->nLandmarks);
 		std::generate(lkposv.begin(), lkposv.end(), [this, &lkDist]() -> double {
@@ -322,15 +279,10 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 	}	// epoch
 
 
-	//double ff = fitness(bestCand.first, bestCand.second);
-	//std::cout << "Final fitness:" << ff << std::endl;
-
 	return bestCand;
-	//return candidates[bestCandIndex];
 }	// localize1D
 
 
-//void Genetic::crossOver(const Positions& parent1, const Positions& parent2, Positions& child1, Positions& child2) const
 template <typename Seq>
 void Genetic::crossOver(const Seq& parent1, const Seq& parent2, Seq& child1, Seq& child2) const
 {
@@ -349,8 +301,6 @@ void Genetic::crossOver(const Seq& parent1, const Seq& parent2, Seq& child1, Seq
 		throw std::runtime_error("At least 2 elements are needed to perform a crossover.");
 
 
-	//auto& randomEngine = this->world.getRandomEngine();
-
 	std::uniform_int_distribution<int> dist(1, n-1);	// [1, n-1]
 	int splitIndex = dist(this->randomEngine);
 
@@ -361,23 +311,17 @@ void Genetic::crossOver(const Seq& parent1, const Seq& parent2, Seq& child1, Seq
 	// child2 = parent2[0..splitIndex) + parent1[splitIndex..n)
 	std::copy_n(parent2.begin(), splitIndex, child2.begin());	// par2 [0..splitIndex) -> child2 [0..splitIndex)
 	std::copy_n(parent1.begin() + splitIndex, n - splitIndex, child2.begin() + splitIndex);	// par1 [splitIndex..n) -> child2 [splitIndex..n)
-
 }	// crossOver
 
-//void Genetic::mutate(Positions& posv) const
 template <typename Seq>
 void Genetic::mutate(Seq &posv, double min, double max) const
 {
 	if (posv.size() < 1)
 		throw std::runtime_error("Can't mutate an empty sequence.");
 
-	//auto& randomEngine = this->world.getRandomEngine();
-
 	std::uniform_int_distribution<int> indexDist(0, static_cast<int>(posv.size())-1);	
 	//std::uniform_real_distribution<double> xDist(0, this->world.getWidth()), yDist(0, this->world.getHeight());
 	std::uniform_real_distribution<double> posDist(min, max);
 	int index = indexDist(this->randomEngine);
 	posv[index] = posDist(this->randomEngine);
-	//posv[index].first = xDist(randomEngine);
-	//posv[index].second = yDist(randomEngine);
-}
+}	// mutate
