@@ -35,9 +35,8 @@ int main()
 
         std::cout << "Actual robot positions:" << std::endl << rx0 << " " << ry0 << std::endl;
 
-        // TEST!
-        std::vector<std::pair<double,double>> actualRPosV;
-        actualRPosV.emplace_back(rx0, ry0);
+        //std::vector<std::pair<double,double>> actualRPosV;
+        //actualRPosV.emplace_back(rx0, ry0);
 
         robot.sense(); // record zero displacement and landmark distances
 
@@ -47,7 +46,7 @@ int main()
 
             std::cout << world.getRobotX() << " " << world.getRobotY() << std::endl;
 
-            actualRPosV.emplace_back(world.getRobotX(), world.getRobotY());
+            //actualRPosV.emplace_back(world.getRobotX(), world.getRobotY());
         }
 
                 
@@ -55,9 +54,7 @@ int main()
 
         //auto [estPositions, estLandmarks] = robot.localize(GraphSlam(rx0, ry0, static_cast<int>(world.getLandmarkNum())));
         //auto [estPositions, estLandmarks] = robot.localize(Genetic(world));
-        Genetic g(world);
-        g.giveRPositions(actualRPosV);
-        auto [estPositions, estLandmarks] = robot.localize(g);
+        auto [estPositions, estLandmarks] = robot.localize(Genetic(0, world.getWidth(), 0, world.getHeight(), world.getLandmarkNum(), 10000, 2000, 0.7, 1000));
         
 
         // Print estimated positions and landmarks.
