@@ -48,7 +48,6 @@ private:
 	template <typename Seq>
 	void mutate(Seq& posv, double min, double max) const;
 
-	//const World& world;
 	double minX, maxX, minY, maxY;
 	int nLandmarks, nEpochs, nCandidates;
 	double mutationChance;

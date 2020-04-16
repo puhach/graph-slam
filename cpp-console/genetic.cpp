@@ -42,12 +42,12 @@ std::pair<Positions, Positions> Genetic::localize(const Measurements& measuremen
 
 
 	if (this->printEvery)
-		std::cout << "Locating X coordinates..." << std::endl;
+		std::cout << std::endl << "Locating X coordinates..." << std::endl;
 
 	const auto& [rposxv, lkposxv] = this->localize1D(measurementsX, displacementsX, measurementNoise, motionNoise, this->minX, this->maxX);
 
 	if (this->printEvery)
-		std::cout << "Locating Y coordinates..." << std::endl;
+		std::cout << std::endl << "Locating Y coordinates..." << std::endl;
 
 	const auto& [rposyv, lkposyv] = this->localize1D(measurementsY, displacementsY, measurementNoise, motionNoise, this->minY, this->maxY);
 
@@ -107,14 +107,11 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 		rposv.resize(nTimesteps);
 		rposv[0] = posDist(this->randomEngine);
 		for (int t = 1; t < nTimesteps; ++t)
-			///rposv[t] = std::min(std::max(minPos, rposv[t-1] + displacements[t]), maxPos);
 			rposv[t] = rposv[t - 1] + displacements[t];
-		//track(rposv);
 
 
 		lkposv.resize(this->nLandmarks);
 		std::generate(lkposv.begin(), lkposv.end(), [this, &lkDist]() -> double {
-				//return posDist(randomEngine);
 				return lkDist(this->randomEngine);
 			});
 
@@ -174,7 +171,6 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 		}
 
 
-		//for (const auto& measurement : measurements)
 		for (int t = 0; t < measurements.size(); ++t)
 		{
 			const auto& measurement = measurements[t];
@@ -189,7 +185,6 @@ std::pair<Genetic::Positions1D, Genetic::Positions1D> Genetic::localize1D(const 
 			}	// landmark
 		}
 
-		// TODO: define eps constant
 		return 1 / (diff + 1e-8);
 	};
 
@@ -320,7 +315,6 @@ void Genetic::mutate(Seq &posv, double min, double max) const
 		throw std::runtime_error("Can't mutate an empty sequence.");
 
 	std::uniform_int_distribution<int> indexDist(0, static_cast<int>(posv.size())-1);	
-	//std::uniform_real_distribution<double> xDist(0, this->world.getWidth()), yDist(0, this->world.getHeight());
 	std::uniform_real_distribution<double> posDist(min, max);
 	int index = indexDist(this->randomEngine);
 	posv[index] = posDist(this->randomEngine);
