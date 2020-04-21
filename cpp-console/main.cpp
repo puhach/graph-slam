@@ -13,10 +13,21 @@ int main()
 {
     try
     {
-        // TODO: enter the world size, the number of landmarks, and the number of time steps
+        int worldWidth = 0, worldHeight = 0;
+        std::cout << "Enter the world size (width and height): ";
+        std::cin >> worldWidth >> worldHeight;
+        
+        int nLandmarks = 0;
+        std::cout << "Enter the number of landmarks: ";
+        std::cin >> nLandmarks;
 
-        // Initialize the world of size 8 x 10 with 12 landmarks.
-        World world(8, 10, 3);
+        if (std::cin.fail())
+            throw std::runtime_error("Invalid input.");
+
+        // Initialize the world.
+        World world(worldWidth, worldHeight, nLandmarks);
+        /// Initialize the world of size 8 x 10 with 12 landmarks.
+        //World world(8, 10, 3);
 
         
         // Show the landmarks.
@@ -64,6 +75,6 @@ int main()
     }   // try
     catch (const std::exception & e)
     {
-        std::cout << e.what() << std::endl;
+        std::cout << std::endl << e.what() << std::endl;
     }
 }
