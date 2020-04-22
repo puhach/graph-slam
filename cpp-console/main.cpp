@@ -13,6 +13,8 @@ int main()
 {
     try
     {
+        // Initialize the world.
+
         int worldWidth = 0, worldHeight = 0;
         std::cout << "Enter the world size (width and height): ";
         std::cin >> worldWidth >> worldHeight;
@@ -22,23 +24,36 @@ int main()
         std::cin >> nLandmarks;
 
         if (std::cin.fail())
-            throw std::runtime_error("Invalid input.");
-
-        // Initialize the world.
+            throw std::runtime_error("Invalid input for the world parameters.");
+               
         World world(worldWidth, worldHeight, nLandmarks);
         /// Initialize the world of size 8 x 10 with 12 landmarks.
         //World world(8, 10, 3);
-
-        
+                
         // Show the landmarks.
         std::cout << world << std::endl;
 
-        
-        // Create the robot at position (3; 4) in the world.
-        double rx0 = 3, ry0 = 4;
-        Robot& robot = world.createRobot(rx0, ry0, 20, 1, 0.008, 0.008);
+
+        // Create the robot.
+
+        double rx0 = 0, ry0 = 0;
+        std::cout << "Enter the initial robot position (x and y): ";
+        std::cin >> rx0 >> ry0;
+
+        double sensorRange = 0;
+        std::cout << "Enter the sensor range: ";
+        std::cin >> sensorRange;
+
+        if (std::cin.fail())
+            throw std::runtime_error("Invalid input for the robot parameters.");
+
+        Robot& robot = world.createRobot(rx0, ry0, sensorRange, 1, 0.008, 0.008);
+        /// Create the robot at position (3; 4) in the world.
+        //double rx0 = 3, ry0 = 4;
+        //Robot& robot = world.createRobot(rx0, ry0, 20, 1, 0.008, 0.008);
 
         
+        // TODO: enter the number of time steps.
         // Simulate robot motions and measurements over 50 time steps.
         
         constexpr int timesteps = 15;
