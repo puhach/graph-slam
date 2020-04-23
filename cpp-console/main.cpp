@@ -1,7 +1,4 @@
 
-
-
-
 #include "world.h"
 #include "robot.h"
 #include "graphslam.h"
@@ -51,14 +48,18 @@ int main()
         /// Create the robot at position (3; 4) in the world.
         //double rx0 = 3, ry0 = 4;
         //Robot& robot = world.createRobot(rx0, ry0, 20, 1, 0.008, 0.008);
-
+                
         
-        // TODO: enter the number of time steps.
-        // Simulate robot motions and measurements over 50 time steps.
+        // Simulate robot motions and measurements over the specified number of time steps.
         
-        constexpr int timesteps = 15;
+        int timesteps = 0;
+        std::cout << "Enter the number of time steps: ";
+        std::cin >> timesteps;
 
-        std::cout << "Actual robot positions:" << std::endl << rx0 << " " << ry0 << std::endl;
+        if (std::cin.fail())
+            throw std::runtime_error("Invalid number of time steps.");
+
+        std::cout << std::endl << "Actual robot positions:" << std::endl << rx0 << " " << ry0 << std::endl;
 
         robot.sense(); // record zero displacement and landmark distances
 
