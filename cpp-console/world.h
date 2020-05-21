@@ -62,9 +62,10 @@ private:
 
 	int width, height;
 	std::vector<std::pair<double, double> > landmarks;	
-	//RobotWrapper robot;
 	double robotX, robotY;
+	// Robot object was replaced by a smart pointer, otherwise we would have to deal with a Robot instance in invalid state.
 	std::unique_ptr<RobotWrapper> robot;
+	//RobotWrapper robot;
 };	// World
 
 

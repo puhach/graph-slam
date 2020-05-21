@@ -4,10 +4,6 @@
 #include <vector>
 
 
-//using Position = std::pair<double, double>;
-//using Positions = std::vector<Position>;
-//using RobotPosition = std::pair<double, double>;
-//using LandmarkPosition = std::tuple<int, double, double>;
 using Position = std::pair<double, double>;	// Landmark or Robot position
 using Positions = std::vector<Position>;
 

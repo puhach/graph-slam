@@ -30,19 +30,6 @@ Robot::Robot(double sensorRange, double stepSize, double measurementNoise, doubl
 //https://akrzemi1.wordpress.com/2015/09/11/declaring-the-move-constructor/
 //Robot::Robot(Robot&& other) noexcept = default;
 
-//Robot::Robot(Robot&& other) noexcept
-//	: sensorRange(other.sensorRange)
-//	, stepSize(other.stepSize)
-//	, measurementNoise(other.measurementNoise)
-//	, motionNoise(other.motionNoise)
-//	, world(other.world)
-//	, move(std::move(other.move))
-//	, senseLandmarks(std::move(other.senseLandmarks))
-//	, measurements(std::move(other.measurements))
-//	, displacements(std::move(other.displacements))
-//{
-//
-//}
 
 //std::pair<Positions, Positions> Robot::localize(double x0, double y0) const
 template <class Localizer>
@@ -81,7 +68,6 @@ bool Robot::moveAndSense(double dx, double dy)
 
 void Robot::roamAndSense()
 {
-	//throw std::runtime_error("Not implemented");
 	thread_local std::uniform_real_distribution<double> orientDist(0, 2 * std::acos(-1));
 		
 	double dx = 0, dy = 0;
@@ -94,11 +80,8 @@ void Robot::roamAndSense()
 		dx = this->stepSize * std::cos(orientation);
 		dy = this->stepSize * std::sin(orientation);
 	
-		//distortMotion(dx, dy);
-	
 	} while (!this->move(this->world, dx, dy, this->motionNoise));
 	
-	//return Displacement(dx, dy);
 	this->measurements.emplace_back(this->senseLandmarks(this->world, this->sensorRange, this->measurementNoise));
 	this->displacements.emplace_back(dx, dy);
 }	// roamAndSense

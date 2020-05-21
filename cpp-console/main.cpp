@@ -24,8 +24,6 @@ int main()
             throw std::runtime_error("Invalid input for the world parameters.");
                
         World world(worldWidth, worldHeight, nLandmarks);
-        /// Initialize the world of size 8 x 10 with 12 landmarks.
-        //World world(8, 10, 3);
                 
         // Show the landmarks.
         std::cout << world << std::endl;
@@ -45,9 +43,6 @@ int main()
             throw std::runtime_error("Invalid input for the robot parameters.");
 
         Robot& robot = world.createRobot(rx0, ry0, sensorRange, 1, 0.008, 0.008);
-        /// Create the robot at position (3; 4) in the world.
-        //double rx0 = 3, ry0 = 4;
-        //Robot& robot = world.createRobot(rx0, ry0, 20, 1, 0.008, 0.008);
                 
         
         // Simulate robot motions and measurements over the specified number of time steps.
@@ -74,7 +69,6 @@ int main()
         // Run SLAM to estimate positions of the robot and landmarks.
 
         auto [estPositions, estLandmarks] = robot.localize(GraphSlam(rx0, ry0, static_cast<int>(world.getLandmarkNum())));
-        //auto [estPositions, estLandmarks] = robot.localize(rx0, ry0);
         
 
         // Print estimated positions and landmarks.
